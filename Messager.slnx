@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Sources/">
+    <Project Path="Sources/Messager.NET.Analyzer/Messager.NET.Analyzer.csproj" Type="C#" />
+    <Project Path="Sources/Messager.NET/Messager.NET.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Messager.NET.Tests/Messager.NET.Tests.csproj" Type="C#" />
+  </Folder>
+</Solution>
