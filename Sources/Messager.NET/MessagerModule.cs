@@ -56,40 +56,43 @@ public sealed class MessagerModule : Module
 		builder.RegisterGeneric(typeof(Request<,>))
 			.As(typeof(IRequest<,>));
 		
-		builder.RegisterSource(new AutoSenderRegistrationSource());
-		builder.RegisterSource(new AutoReceiverRegistrationSource());
+		builder.RegisterGeneric(typeof(AsyncRequest<,>))
+			.As(typeof(IAsyncRequest<,>));
+		
+		builder.RegisterSource(new GenericRegistrationSource(
+			serviceType => serviceType == typeof(ISender<,>),
+			typeArgs => typeof(KeyedSender<,>).MakeGenericType(typeArgs)
+		));
+
+		builder.RegisterSource(new GenericRegistrationSource(
+			serviceType => serviceType == typeof(IReceiver<,>),
+			typeArgs => typeof(KeyedReceiver<,>).MakeGenericType(typeArgs)
+		));
+
+		builder.RegisterSource(new GenericRegistrationSource(
+			serviceType => serviceType == typeof(IRequest<,>),
+			typeArgs => typeof(Request<,>).MakeGenericType(typeArgs)
+		));
+
+		builder.RegisterSource(new GenericRegistrationSource(
+			serviceType => serviceType == typeof(IAsyncRequest<,>),
+			typeArgs => typeof(AsyncRequest<,>).MakeGenericType(typeArgs)
+		));
 	}
 
-	private class AutoSenderRegistrationSource : IRegistrationSource
+	private class GenericRegistrationSource : IRegistrationSource
 	{
-		public bool IsAdapterForIndividualComponents => false;
-
-		public IEnumerable<IComponentRegistration> RegistrationsFor(
-			Service service, 
-			Func<Service, IEnumerable<ServiceRegistration>> registrationAccessor)
+		private readonly Func<Type, bool> _serviceFilter;
+		private readonly Func<Type[], Type> _concreteTypeFactory;
+    
+		public GenericRegistrationSource(
+			Func<Type, bool> serviceFilter,
+			Func<Type[], Type> concreteTypeFactory)
 		{
-			if (service is not IServiceWithType swt || !swt.ServiceType.IsGenericType)
-				yield break;
-			
-			var genericType = swt.ServiceType.GetGenericTypeDefinition();
-			
-			if (genericType != typeof(ISender<,>))
-				yield break;
-			
-			var args = swt.ServiceType.GetGenericArguments();
-			var concreteType = typeof(KeyedSender<,>).MakeGenericType(args);
-			var registration = RegistrationBuilder
-				.ForType(concreteType)
-				.As(service)
-				.InstancePerDependency()
-				.CreateRegistration();
-			
-			yield return registration;
+			_serviceFilter = serviceFilter;
+			_concreteTypeFactory = concreteTypeFactory;
 		}
-	}
 
-	private class AutoReceiverRegistrationSource : IRegistrationSource
-	{
 		public bool IsAdapterForIndividualComponents => false;
 
 		public IEnumerable<IComponentRegistration> RegistrationsFor(
@@ -98,20 +101,18 @@ public sealed class MessagerModule : Module
 		{
 			if (service is not IServiceWithType swt || !swt.ServiceType.IsGenericType)
 				yield break;
-			
-			var genericType = swt.ServiceType.GetGenericTypeDefinition();
-			
-			if (genericType != typeof(IReceiver<,>))
+        
+			if (!_serviceFilter(swt.ServiceType.GetGenericTypeDefinition()))
 				yield break;
-			
+        
 			var args = swt.ServiceType.GetGenericArguments();
-			var concreteType = typeof(KeyedReceiver<,>).MakeGenericType(args);
+			var concreteType = _concreteTypeFactory(args);
 			var registration = RegistrationBuilder
 				.ForType(concreteType)
 				.As(service)
 				.InstancePerDependency()
 				.CreateRegistration();
-			
+        
 			yield return registration;
 		}
 	}
