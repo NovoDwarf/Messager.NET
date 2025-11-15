@@ -1,12 +1,12 @@
 ﻿using Messager.NET.Core;
-using Messager.NET.Entity.Resources;
 using Messager.NET.Extensions;
 using Messager.NET.Interfaces.Core;
 using Messager.NET.Interfaces.Receivers;
 using Messager.NET.Interfaces.Senders;
+using Messager.NET.Models.Resources;
 using Microsoft.Extensions.Logging;
 
-namespace Messager.NET.Entity.Brokers;
+namespace Messager.NET.Models.Brokers;
 
 public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IReceiver<TKey, TEvent> 
 	where TKey : notnull

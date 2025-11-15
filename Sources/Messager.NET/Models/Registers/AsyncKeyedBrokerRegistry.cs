@@ -1,8 +1,8 @@
-﻿using Messager.NET.Entity.Brokers;
-using Messager.NET.Helpers;
+﻿using Messager.NET.Helpers;
+using Messager.NET.Models.Brokers;
 using Microsoft.Extensions.Logging;
 
-namespace Messager.NET.Entity.Registers;
+namespace Messager.NET.Models.Registers;
 
 internal class AsyncKeyedBrokerRegistry
 {

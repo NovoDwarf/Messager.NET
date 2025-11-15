@@ -1,7 +1,7 @@
 ﻿using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Receivers;
 
-namespace Messager.NET.Entity.Receivers;
+namespace Messager.NET.Models.Receivers;
 
 public class KeyedReceiver<TKey, TEvent> : IReceiver<TKey, TEvent> 
 	where TKey : notnull

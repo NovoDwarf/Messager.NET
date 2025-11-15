@@ -2,14 +2,13 @@ using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
 using Messager.NET.Core;
-using Messager.NET.Entity.Brokers;
-using Messager.NET.Entity.Receivers;
-using Messager.NET.Entity.Requests;
-using Messager.NET.Entity.Senders;
 using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Receivers;
 using Messager.NET.Interfaces.Requests;
 using Messager.NET.Interfaces.Senders;
+using Messager.NET.Models.Receivers;
+using Messager.NET.Models.Requests;
+using Messager.NET.Models.Senders;
 using Microsoft.Extensions.Logging;
 
 namespace Messager.NET;

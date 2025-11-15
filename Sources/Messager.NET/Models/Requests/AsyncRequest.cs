@@ -1,6 +1,6 @@
 ﻿using Messager.NET.Interfaces.Requests;
 
-namespace Messager.NET.Entity.Requests;
+namespace Messager.NET.Models.Requests;
 
 public class AsyncRequest<TOut, TIn> : IAsyncRequest<TOut, TIn>
 {

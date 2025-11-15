@@ -1,7 +1,7 @@
-﻿using Messager.NET.Entity.Registers;
-using Messager.NET.Interfaces.Factories;
+﻿using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Receivers;
 using Messager.NET.Interfaces.Senders;
+using Messager.NET.Models.Registers;
 using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Core;

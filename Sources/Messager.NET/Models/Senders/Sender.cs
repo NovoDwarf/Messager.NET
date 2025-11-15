@@ -1,7 +1,7 @@
 ﻿using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Senders;
 
-namespace Messager.NET.Entity.Senders;
+namespace Messager.NET.Models.Senders;
 
 public class Sender<TEvent> : ISender<TEvent>
 {

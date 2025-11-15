@@ -1,6 +1,6 @@
 ﻿using Messager.NET.Interfaces.Requests;
 
-namespace Messager.NET.Entity.Requests;
+namespace Messager.NET.Models.Requests;
 
 public class Request<TOut, TIn> : IRequest<TOut, TIn>
 {

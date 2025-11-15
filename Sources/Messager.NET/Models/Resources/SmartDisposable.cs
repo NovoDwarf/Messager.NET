@@ -1,4 +1,4 @@
-﻿namespace Messager.NET.Entity.Resources;
+﻿namespace Messager.NET.Models.Resources;
 
 public sealed class SmartDisposable : IDisposable
 {
