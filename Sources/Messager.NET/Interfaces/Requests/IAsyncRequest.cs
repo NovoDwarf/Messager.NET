@@ -1,18 +1,56 @@
 ﻿namespace Messager.NET.Interfaces.Requests;
 
-public interface IAsyncRequest<TOut, TIn>
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TOut"></typeparam>
+/// <typeparam name="TIn"></typeparam>
+public interface IAsyncRequest<TOut, in TIn>
 {
-	public ValueTask<TOut> RequestAsync(TIn input);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <returns></returns>
+	public ValueTask<TOut> InvokeAsync(TIn input);
 	
-	public bool TryRequestAsync(TIn input, out TOut? output);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <param name="output"></param>
+	/// <returns></returns>
+	public bool TryInvokeAsync(TIn input, out TOut? output);
 
 }
 
-public interface IAsyncRequest<TKey, TOut, TIn>
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TKey"></typeparam>
+/// <typeparam name="TOut"></typeparam>
+/// <typeparam name="TIn"></typeparam>
+public interface IAsyncRequest<TKey, TOut, in TIn>
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	public TKey Key { get; }
 	
-	public ValueTask<TOut> RequestAsync(TKey key, TIn input);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="key"></param>
+	/// <param name="input"></param>
+	/// <returns></returns>
+	public ValueTask<TOut> InvokeAsync(TKey key, TIn input);
 	
-	public bool TryRequestAsync(TKey key, TIn input, out TOut? output);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="key"></param>
+	/// <param name="input"></param>
+	/// <param name="output"></param>
+	/// <returns></returns>
+	public bool TryInvoke(TKey key, TIn input, out TOut? output);
 }

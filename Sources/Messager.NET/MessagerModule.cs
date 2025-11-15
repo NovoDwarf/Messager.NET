@@ -2,10 +2,13 @@ using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
 using Messager.NET.Core;
+using Messager.NET.Entity.Brokers;
 using Messager.NET.Entity.Receivers;
+using Messager.NET.Entity.Requests;
 using Messager.NET.Entity.Senders;
 using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Receivers;
+using Messager.NET.Interfaces.Requests;
 using Messager.NET.Interfaces.Senders;
 using Microsoft.Extensions.Logging;
 
@@ -20,6 +23,7 @@ public sealed class MessagerModule : Module
 		_options = options ?? new MessagerOptions();
 	}
 
+	/// <inheritdoc/>
 	protected override void Load(ContainerBuilder builder)
 	{
 		builder.Register(c =>
@@ -30,7 +34,7 @@ public sealed class MessagerModule : Module
 				
 				return new Exchange(factory);
 			})
-			.As<ISimpleBrokerFactory>()
+			.As<IMessageBrokerFactory>()
 			.As<IKeyedMessageBrokerFactory>()
 			.SingleInstance();
 
@@ -49,6 +53,9 @@ public sealed class MessagerModule : Module
 		builder.RegisterGeneric(typeof(KeyedReceiver<,>))
 			.As(typeof(IReceiver<,>))
 			.InstancePerDependency();
+
+		builder.RegisterGeneric(typeof(Request<,>))
+			.As(typeof(IRequest<,>));
 		
 		builder.RegisterSource(new AutoSenderRegistrationSource());
 		builder.RegisterSource(new AutoReceiverRegistrationSource());

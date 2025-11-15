@@ -7,7 +7,7 @@ public class Sender<TEvent> : ISender<TEvent>
 {
 	private readonly ISender<TEvent> _impl;
 	
-	public Sender(ISimpleBrokerFactory factory)
+	public Sender(IMessageBrokerFactory factory)
 	{
 		_impl = factory.GetSender<TEvent>();
 	}

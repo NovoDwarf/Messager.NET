@@ -6,37 +6,33 @@ namespace Messager.NET.Interfaces.Factories;
 /// <summary>
 /// 
 /// </summary>
-public interface IKeyedMessageBrokerFactory
+public interface IMessageBrokerFactory
 {
 	/// <summary>
-	/// 
+	/// B
 	/// </summary>
-	/// <typeparam name="TKey"></typeparam>
 	/// <typeparam name="TEvent"></typeparam>
 	/// <returns></returns>
-	ISender<TKey, TEvent> GetKeyedSender<TKey, TEvent>() where TKey : notnull;
+	ISender<TEvent> GetSender<TEvent>();
 	
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="TKey"></typeparam>
 	/// <typeparam name="TEvent"></typeparam>
 	/// <returns></returns>
-	IReceiver<TKey, TEvent> GetKeyedReceiver<TKey, TEvent>() where TKey : notnull;
+	IReceiver<TEvent> GetReceiver<TEvent>();
 
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="TKey"></typeparam>
 	/// <typeparam name="TEvent"></typeparam>
 	/// <returns></returns>
-	IAsyncSender<TKey, TEvent> GetAsyncKeyedSender<TKey, TEvent>() where TKey : notnull;
+	IAsyncSender<TEvent> GetAsyncSender<TEvent>();
 	
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="TKey"></typeparam>
 	/// <typeparam name="TEvent"></typeparam>
 	/// <returns></returns>
-	IAsyncReceiver<TKey, TEvent> GetAsyncKeyedReceiver<TKey, TEvent>() where TKey : notnull;
+	IAsyncReceiver<TEvent> GetAsyncReceiver<TEvent>();
 }

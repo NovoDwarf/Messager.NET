@@ -2,6 +2,9 @@
 
 namespace Messager.NET.Extensions;
 
+/// <summary>
+/// Represents a set of extension methods for logging autogenereated by Microsoft.Extensions.Logging Source Generator.
+/// </summary>
 public static partial class LoggerExtensions
 {
     #region Simple

@@ -1,11 +1,29 @@
 ﻿namespace Messager.NET.Interfaces.Senders;
 
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TEvent"></typeparam>
 public interface ISender<in TEvent>
 {
-	void Send(TEvent evt);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="evt"></param>
+	public void Send(TEvent evt);
 }
 
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TKey"></typeparam>
+/// <typeparam name="TEvent"></typeparam>
 public interface ISender<in TKey, in TEvent> where TKey : notnull
 {
-	void Send(TKey key, TEvent evt);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="key"></param>
+	/// <param name="evt"></param>
+	public void Send(TKey key, TEvent evt);
 }
