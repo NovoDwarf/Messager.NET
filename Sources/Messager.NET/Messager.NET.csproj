@@ -9,15 +9,23 @@
         <Authors>NovoDwarf</Authors>
         <Copyright>NovoDwarf</Copyright>
         <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
+        <Description>A lightweight and fast messaging system</Description>
+        <PackageProjectUrl>https://github.com/NovoDwarf/Messager.NET</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/NovoDwarf/Messager.NET/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/NovoDwarf/Messager.NET</RepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <DocumentationFile>bin\Release\Messager.NET.xml</DocumentationFile>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\Messager.NET.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
     </ItemGroup>
     
 </Project>
