@@ -1,24 +1,115 @@
 ﻿namespace Messager.NET.Models.Resources;
 
+/// <summary>
+/// A thread-safe collection of <see cref="IDisposable"/> objects that are disposed
+/// together when the list itself is disposed.
+/// </summary>
+/// <remarks>
+/// This class provides a convenient way to manage multiple disposable resources
+/// as a single unit. All disposables added to the list will be disposed when
+/// the <see cref="Dispose"/> method is called. The class ensures thread-safe
+/// operations for both adding items and disposing the entire collection.
+/// </remarks>
 public sealed class DisposableList : IDisposable
 {
-	private readonly List<IDisposable> _disposables = [];
-	
-	private bool _disposed;
-	
-	public void Add(params IDisposable[] disposables)
-	{
-		_disposables.AddRange(disposables);
-	}
-	
-	public void Dispose()
-	{
-		ObjectDisposedException.ThrowIf(_disposed, typeof(DisposableList));
-		
-		foreach (var disposable in _disposables) 
-			disposable.Dispose();
-		
-		_disposed = true;
-		_disposables.Clear();
-	}
+    private readonly List<IDisposable> _disposables = [];
+    private readonly Lock _lock = new();
+    
+    private bool _disposed;
+
+    /// <summary>
+    /// Adds one or more <see cref="IDisposable"/> objects to the list.
+    /// </summary>
+    /// <param name="disposables">The disposable objects to add.</param>
+    /// <exception cref="ObjectDisposedException">
+    /// Thrown if the list has already been disposed.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if any of the provided disposables is null.
+    /// </exception>
+    public void Add(params IDisposable[] disposables)
+    {
+        ArgumentNullException.ThrowIfNull(disposables);
+        
+        lock (_lock)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            
+            foreach (var disposable in disposables)
+            {
+                ArgumentNullException.ThrowIfNull(disposable);
+                _disposables.Add(disposable);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the number of disposable objects in the list.
+    /// </summary>
+    public int Count
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _disposables.Count;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the list has been disposed.
+    /// </summary>
+    public bool IsDisposed
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _disposed;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Disposes all <see cref="IDisposable"/> objects in the list and prevents
+    /// further modifications. This method is thread-safe and idempotent.
+    /// </summary>
+    /// <remarks>
+    /// Disposable objects are disposed in the order they were added to the list.
+    /// If any disposable throws an exception during disposal, it will not prevent
+    /// the remaining disposables from being disposed. The first exception encountered
+    /// will be re-thrown after all disposables have been processed.
+    /// </remarks>
+    public void Dispose()
+    {
+        List<IDisposable> toDispose;
+        
+        lock (_lock)
+        {
+            if (_disposed)
+                return;
+                
+            _disposed = true;
+            toDispose = new List<IDisposable>(_disposables);
+            _disposables.Clear();
+        }
+        
+        Exception? firstException = null;
+        
+        foreach (var disposable in toDispose)
+        {
+            try
+            {
+                disposable.Dispose();
+            }
+            catch (Exception ex)
+            {
+                firstException ??= ex;
+            }
+        }
+        
+        if (firstException != null)
+            throw new AggregateException("One or more disposables threw exceptions during disposal", firstException);
+    }
 }

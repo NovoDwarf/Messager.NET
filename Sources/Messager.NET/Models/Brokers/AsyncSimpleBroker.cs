@@ -44,7 +44,7 @@ public class AsyncSimpleBroker<TEvent> : IBroker, IAsyncSender<TEvent>, IAsyncRe
 			_logger?.LogSubscriberAdded(BrokerType, EventType, Id);
 		}
 
-		return new AsyncUnsubscriber(() =>
+		return new UnsubscriberAsync(() =>
 		{
 			lock (_locker)
 			{

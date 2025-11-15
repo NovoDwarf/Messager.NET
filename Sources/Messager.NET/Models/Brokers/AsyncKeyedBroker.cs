@@ -38,7 +38,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 			_logger?.LogDebug("Subscriber added for key {Key} in AsyncKeyedBroker<{KeyType}, {EventType}>. Total subscribers for key: {Count}", key, typeof(TKey).Name, typeof(TEvent).Name, list.Count);
 		}
 
-		return new AsyncUnsubscriber(() =>
+		return new UnsubscriberAsync(() =>
 		{
 			lock (_locker)
 			{
