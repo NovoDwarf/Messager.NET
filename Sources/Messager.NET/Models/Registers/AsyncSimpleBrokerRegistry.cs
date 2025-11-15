@@ -10,12 +10,9 @@ internal class AsyncSimpleBrokerRegistry
 	private readonly Lock _locker = new();
 	private readonly ILoggerFactory? _loggerFactory;
 
-	public AsyncSimpleBrokerRegistry(ILoggerFactory? loggerFactory = null)
-	{
-		_loggerFactory = loggerFactory;
-	}
+	internal AsyncSimpleBrokerRegistry(ILoggerFactory? loggerFactory = null) => _loggerFactory = loggerFactory;
 
-	public AsyncSimpleBroker<TEvent> GetOrCreate<TEvent>()
+	internal AsyncSimpleBroker<TEvent> GetOrCreate<TEvent>()
 	{
 		lock (_locker)
 		{

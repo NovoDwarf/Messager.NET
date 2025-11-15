@@ -10,12 +10,9 @@ internal class KeyedBrokerRegistry
 	private readonly Lock _locker = new();
 	private readonly ILoggerFactory? _loggerFactory;
 
-	public KeyedBrokerRegistry(ILoggerFactory? loggerFactory = null)
-	{
-		_loggerFactory = loggerFactory;
-	}
+	internal KeyedBrokerRegistry(ILoggerFactory? loggerFactory = null) => _loggerFactory = loggerFactory;
 
-	public KeyedBroker<TKey, TEvent> GetOrCreate<TKey, TEvent>() where TKey : notnull
+	internal KeyedBroker<TKey, TEvent> GetOrCreate<TKey, TEvent>() where TKey : notnull
 	{
 		lock (_locker)
 		{

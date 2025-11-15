@@ -10,12 +10,9 @@ internal class AsyncKeyedBrokerRegistry
 	private readonly Lock _locker = new();
 	private readonly ILoggerFactory? _loggerFactory;
 
-	public AsyncKeyedBrokerRegistry(ILoggerFactory? loggerFactory = null)
-	{
-		_loggerFactory = loggerFactory;
-	}
+	internal AsyncKeyedBrokerRegistry(ILoggerFactory? loggerFactory = null) => _loggerFactory = loggerFactory;
 
-	public AsyncKeyedBroker<TKey, TEvent> GetOrCreate<TKey, TEvent>() where TKey : notnull
+	internal AsyncKeyedBroker<TKey, TEvent> GetOrCreate<TKey, TEvent>() where TKey : notnull
 	{
 		lock (_locker)
 		{

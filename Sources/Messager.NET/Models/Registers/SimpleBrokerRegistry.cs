@@ -11,14 +11,14 @@ internal class SimpleBrokerRegistry
 	
 	private readonly ILoggerFactory? _loggerFactory;
 	private readonly ILogger<SimpleBrokerRegistry>? _logger;
-	
-	public SimpleBrokerRegistry(ILoggerFactory? loggerFactory = null)
+
+	internal SimpleBrokerRegistry(ILoggerFactory? loggerFactory = null)
 	{
 		_loggerFactory = loggerFactory;
 		_logger = loggerFactory?.CreateLogger<SimpleBrokerRegistry>();
 	}
 
-	public SimpleBroker<TEvent> GetOrCreate<TEvent>()
+	internal SimpleBroker<TEvent> GetOrCreate<TEvent>()
 	{
 		lock (_locker)
 		{
