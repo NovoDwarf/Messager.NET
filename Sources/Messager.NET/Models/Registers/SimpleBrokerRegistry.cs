@@ -1,0 +1,32 @@
+﻿using Messager.NET.Models.Brokers;
+using Messager.NET.Utilities.Helpers;
+using Microsoft.Extensions.Logging;
+
+namespace Messager.NET.Models.Registers;
+
+internal class SimpleBrokerRegistry
+{
+	private readonly Dictionary<Type, object> _brokers = new();
+	private readonly Lock _locker = new();
+	
+	private readonly ILoggerFactory? _loggerFactory;
+	private readonly ILogger<SimpleBrokerRegistry>? _logger;
+
+	internal SimpleBrokerRegistry(ILoggerFactory? loggerFactory = null)
+	{
+		_loggerFactory = loggerFactory;
+		_logger = loggerFactory?.CreateLogger<SimpleBrokerRegistry>();
+	}
+
+	internal SimpleBroker<TEvent> GetOrCreate<TEvent>()
+	{
+		lock (_locker)
+		{
+			return RegistryHelper.GetOrCreate(_brokers, typeof(TEvent), () =>
+			{
+				var logger = _loggerFactory?.CreateLogger<SimpleBroker<TEvent>>();
+				return new SimpleBroker<TEvent>(logger);
+			});
+		}
+	}
+}

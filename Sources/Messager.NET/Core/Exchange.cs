@@ -1,15 +1,16 @@
-﻿using Messager.NET.Entity.Registers;
-using Messager.NET.Interfaces.Factories;
+﻿using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Receivers;
 using Messager.NET.Interfaces.Senders;
+using Messager.NET.Models.Registers;
 using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Core;
 
-public sealed class Exchange : ISimpleBrokerFactory, IKeyedMessageBrokerFactory
+internal sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
 {
     private readonly SimpleBrokerRegistry _simpleBrokers;
     private readonly KeyedBrokerRegistry _keyedBrokers;
+    
     private readonly AsyncSimpleBrokerRegistry _asyncSimpleBrokers;
     private readonly AsyncKeyedBrokerRegistry _asyncKeyedBrokers;
     
@@ -17,13 +18,14 @@ public sealed class Exchange : ISimpleBrokerFactory, IKeyedMessageBrokerFactory
     {
         _simpleBrokers = new SimpleBrokerRegistry(loggerFactory);
         _keyedBrokers = new KeyedBrokerRegistry(loggerFactory);
+        
         _asyncSimpleBrokers = new AsyncSimpleBrokerRegistry(loggerFactory);
         _asyncKeyedBrokers = new AsyncKeyedBrokerRegistry(loggerFactory);
     }
-    
+
     public ISender<TEvent> GetSender<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();
     public IReceiver<TEvent> GetReceiver<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();
-    
+
     public IAsyncSender<TEvent> GetAsyncSender<TEvent>() => _asyncSimpleBrokers.GetOrCreate<TEvent>();
     public IAsyncReceiver<TEvent> GetAsyncReceiver<TEvent>() => _asyncSimpleBrokers.GetOrCreate<TEvent>();
     

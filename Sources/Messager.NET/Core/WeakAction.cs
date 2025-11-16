@@ -2,13 +2,13 @@
 
 namespace Messager.NET.Core;
 
-public class WeakAction<T>
+internal class WeakAction<T>
 {
 	private readonly WeakReference? _targetRef;
 	private readonly MethodInfo _method;
 	private readonly bool _isStatic;
 
-	public WeakAction(Action<T> action)
+	internal WeakAction(Action<T> action)
 	{
 		_method = action.Method;
 		_isStatic = _method.IsStatic;
@@ -16,9 +16,9 @@ public class WeakAction<T>
 		_targetRef = _isStatic ? null : new WeakReference(action.Target!);
 	}
 
-	public bool IsAlive => _isStatic || (_targetRef?.IsAlive ?? false);
+	internal bool IsAlive => _isStatic || (_targetRef?.IsAlive ?? false);
 
-	public bool TryInvoke(T arg)
+	internal bool TryInvoke(T arg)
 	{
 		if (!_isStatic && !IsAlive)
 			return false;
@@ -32,7 +32,7 @@ public class WeakAction<T>
 		return true;
 	}
 
-	public bool Matches(Action<T> action)
+	internal bool Matches(Action<T> action)
 	{
 		if (action.Method != _method) 
 			return false;
