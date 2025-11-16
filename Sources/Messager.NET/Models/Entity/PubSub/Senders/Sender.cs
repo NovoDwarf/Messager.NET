@@ -1,13 +1,13 @@
 ﻿using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Senders;
 
-namespace Messager.NET.Models.Senders;
+namespace Messager.NET.Models.Entity.PubSub.Senders;
 
 public class Sender<TEvent> : ISender<TEvent>
 {
 	private readonly ISender<TEvent> _impl;
 	
-	public Sender(IMessageBrokerFactory factory)
+	public Sender(IBrokerFactory factory)
 	{
 		_impl = factory.GetSender<TEvent>();
 	}

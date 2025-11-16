@@ -6,7 +6,7 @@ namespace Messager.NET.Interfaces.Factories;
 /// <summary>
 /// 
 /// </summary>
-public interface IMessageBrokerFactory
+public interface IBrokerFactory
 {
 	/// <summary>
 	/// B

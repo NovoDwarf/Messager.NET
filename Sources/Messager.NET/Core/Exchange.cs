@@ -6,17 +6,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Core;
 
-internal sealed class Exchange : IMessageBrokerFactory, IKeyedMessageBrokerFactory
+internal sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
 {
     private readonly SimpleBrokerRegistry _simpleBrokers;
     private readonly KeyedBrokerRegistry _keyedBrokers;
+    
     private readonly AsyncSimpleBrokerRegistry _asyncSimpleBrokers;
     private readonly AsyncKeyedBrokerRegistry _asyncKeyedBrokers;
-
+    
     public Exchange(ILoggerFactory? loggerFactory = null)
     {
         _simpleBrokers = new SimpleBrokerRegistry(loggerFactory);
         _keyedBrokers = new KeyedBrokerRegistry(loggerFactory);
+        
         _asyncSimpleBrokers = new AsyncSimpleBrokerRegistry(loggerFactory);
         _asyncKeyedBrokers = new AsyncKeyedBrokerRegistry(loggerFactory);
     }

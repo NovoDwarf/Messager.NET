@@ -1,6 +1,6 @@
 ﻿namespace Messager.NET.Interfaces.Core;
 
-internal interface IKeyedBroker : IBroker
+internal interface IKeyedBroker : ISimpleBroker
 {
 	public string KeyType { get; }
 }

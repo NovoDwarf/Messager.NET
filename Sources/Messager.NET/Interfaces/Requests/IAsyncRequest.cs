@@ -5,6 +5,24 @@
 /// </summary>
 /// <typeparam name="TOut"></typeparam>
 /// <typeparam name="TIn"></typeparam>
+public interface IAsyncRequest<TOut>
+{
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <returns></returns>
+	public ValueTask<TOut> InvokeAsync();
+	
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <param name="output"></param>
+	/// <returns></returns>
+	public bool TryInvokeAsync(out TOut? output);
+}
+
 public interface IAsyncRequest<TOut, in TIn>
 {
 	/// <summary>
@@ -21,7 +39,6 @@ public interface IAsyncRequest<TOut, in TIn>
 	/// <param name="output"></param>
 	/// <returns></returns>
 	public bool TryInvokeAsync(TIn input, out TOut? output);
-
 }
 
 /// <summary>

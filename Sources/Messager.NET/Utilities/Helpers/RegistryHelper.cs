@@ -1,4 +1,4 @@
-﻿namespace Messager.NET.Helpers;
+﻿namespace Messager.NET.Utilities.Helpers;
 
 internal static class RegistryHelper
 {

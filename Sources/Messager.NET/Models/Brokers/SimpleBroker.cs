@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Models.Brokers;
 
-public class SimpleBroker<TEvent> : IBroker, ISender<TEvent>, IReceiver<TEvent>
+public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TEvent>
 {
 	private readonly List<WeakAction<TEvent>> _handlers = [];
 	private readonly Lock _locker = new();

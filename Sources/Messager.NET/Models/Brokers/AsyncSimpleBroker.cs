@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Models.Brokers;
 
-public class AsyncSimpleBroker<TEvent> : IBroker, IAsyncSender<TEvent>, IAsyncReceiver<TEvent>
+public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IAsyncReceiver<TEvent>
 {
 	private readonly List<Func<TEvent, ValueTask>> _handlers = [];
 	private readonly Lock _locker = new();

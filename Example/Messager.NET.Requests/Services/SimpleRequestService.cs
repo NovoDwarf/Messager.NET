@@ -4,7 +4,7 @@ namespace Messager.NET.Requests.Services;
 
 public class SimpleRequestService
 {
-	public SimpleRequestService(IRequest<string, int> request)
+	public SimpleRequestService(IRequest<string> request)
 	{
 		var cancellationToken = CancellationToken.None;
 		
@@ -12,7 +12,7 @@ public class SimpleRequestService
 		{
 			while (!cancellationToken.IsCancellationRequested)
 			{
-				var result = request.Invoke(1);
+				var result = request.Invoke();
 				
 				Console.WriteLine(result);
 				Thread.Sleep(1000);

@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sources\Messager.NET\Messager.NET.csproj" />
+      <ProjectReference Include="..\..\Sources\Messager.NET\Messager.NET.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,18 +1,28 @@
 ﻿namespace Messager.NET.Interfaces.Requests;
 
-/// <summary>
-/// 
-/// </summary>
-/// <typeparam name="TOutput"></typeparam>
-/// <typeparam name="TInput"></typeparam>
-public interface IRequest<out TOutput, in TInput>
+public interface IRequest<out TOut>
 {
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <param name="input"></param>
 	/// <returns></returns>
-	public TOutput Invoke(TInput input);
+	public TOut Invoke();
+} 
+
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="TOutput"></typeparam>
+/// <typeparam name="TInput"></typeparam>
+public interface IRequest<out TOut, in TIn>
+{
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="input"></param>
+	/// <returns></returns>
+	public TOut Invoke(TIn input);
 }
 
 /// <summary>

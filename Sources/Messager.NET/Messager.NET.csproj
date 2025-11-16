@@ -38,6 +38,7 @@
 
     <ItemGroup>
       <Folder Include="Models\Entity\PubSub\" />
+      <Folder Include="Models\Entity\Requests\" />
     </ItemGroup>
     
 </Project>

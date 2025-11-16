@@ -1,6 +1,6 @@
 ﻿namespace Messager.NET.Interfaces.Core;
 
-internal interface IBroker
+internal interface ISimpleBroker
 {
 
 	public Guid Id { get; internal set; }

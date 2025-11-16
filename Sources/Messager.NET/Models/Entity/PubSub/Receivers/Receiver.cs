@@ -1,13 +1,13 @@
 ﻿using Messager.NET.Interfaces.Factories;
 using Messager.NET.Interfaces.Receivers;
 
-namespace Messager.NET.Models.Receivers;
+namespace Messager.NET.Models.Entity.PubSub.Receivers;
 
 public class Receiver<TEvent> : IReceiver<TEvent>
 {
 	private readonly IReceiver<TEvent> _impl;
 	
-	public Receiver(IMessageBrokerFactory factory)
+	public Receiver(IBrokerFactory factory)
 	{
 		_impl = factory.GetReceiver<TEvent>();
 	}
