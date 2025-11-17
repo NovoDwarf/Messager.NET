@@ -23,6 +23,7 @@ public class Program
 	private static void ConfigurationAction(ContainerBuilder builder)
 	{
 		builder.AddMessager();
+		
 		builder.RegisterType<AsyncReceiverService>().AsSelf().AutoActivate();
 		builder.RegisterType<AsyncSenderService>().AsSelf().AutoActivate();
 	}

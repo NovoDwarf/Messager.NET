@@ -1,10 +1,10 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Messager.NET.AsyncRequests.Services;
 using Messager.NET.Extensions;
-using Messager.NET.SimpleKeyed.Models.Services;
 using Microsoft.Extensions.Hosting;
 
-namespace Messager.NET.SimpleKeyed;
+namespace Messager.NET.AsyncRequests;
 
 public static class Program
 {
@@ -24,7 +24,7 @@ public static class Program
 	{
 		builder.AddMessager();
 		
-		builder.RegisterType<KeyedReceiverService>().AsSelf().AutoActivate();
-		builder.RegisterType<KeyedSenderService>().AsSelf().AutoActivate();
+		builder.RegisterType<AsyncRequestService>().AsSelf().AutoActivate();
+		builder.RegisterType<AsyncRequestWithInputService>().AsSelf().AutoActivate();
 	}
 }

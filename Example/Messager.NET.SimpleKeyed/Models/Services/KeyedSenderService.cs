@@ -3,9 +3,9 @@ using Messager.NET.SimpleKeyed.Models.Events;
 
 namespace Messager.NET.SimpleKeyed.Models.Services;
 
-public class SimpleKeyedSenderService
+public sealed class KeyedSenderService
 {
-	public SimpleKeyedSenderService(ISender<string, SimpleEvent> sender)
+	public KeyedSenderService(ISender<string, SimpleEvent> sender)
 	{
 		var cancellationToken = CancellationToken.None;
 		

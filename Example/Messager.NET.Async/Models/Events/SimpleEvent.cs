@@ -1,3 +1,3 @@
 ﻿namespace Messager.NET.Async.Models.Events;
 
-public record struct SimpleEvent(string Message, ValueTask Task);
+public sealed record SimpleEvent(string Message, ValueTask Task);

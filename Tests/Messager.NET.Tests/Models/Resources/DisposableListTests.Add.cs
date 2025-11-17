@@ -1,5 +1,4 @@
 ﻿using Messager.NET.Models.Resources;
-using Messager.NET.Tests.Objects;
 using Messager.NET.Tests.Objects.Resources;
 
 namespace Messager.NET.Tests.Models.Resources;

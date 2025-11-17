@@ -3,14 +3,16 @@
   <Folder Name="/Examples/PubSub/">
     <Project Path="Example/Messager.NET.Async/Messager.NET.Async.csproj" />
     <Project Path="Example/Messager.NET.AsyncKeyed/Messager.NET.AsyncKeyed.csproj" />
-    <Project Path="Example/Messager.NET.Simple/Messager.NET.Simple.csproj" Type="C#" />
+    <Project Path="Example/Messager.NET.Simple/Messager.NET.Simple.csproj" />
     <Project Path="Example/Messager.NET.SimpleKeyed/Messager.NET.SimpleKeyed.csproj" />
   </Folder>
   <Folder Name="/Examples/Requests/">
-    <Project Path="Example/Messager.NET.Requests/Messager.NET.Requests.csproj" Type="C#" />
+    <Project Path="Example/Messager.NET.AsyncRequests/Messager.NET.AsyncRequests.csproj" Type="C#" />
+    <Project Path="Example/Messager.NET.Requests/Messager.NET.Requests.csproj" />
   </Folder>
   <Folder Name="/Sources/">
     <Project Path="Sources/Messager.NET.Analyzer/Messager.NET.Analyzer.csproj" />
+    <Project Path="Sources/Messager.NET.Benchmarks/Messager.NET.Benchmarks.csproj" Type="C#" />
     <Project Path="Sources/Messager.NET/Messager.NET.csproj" />
   </Folder>
   <Folder Name="/Tests/">

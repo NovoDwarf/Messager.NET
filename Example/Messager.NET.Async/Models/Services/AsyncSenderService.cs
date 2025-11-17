@@ -3,7 +3,7 @@ using Messager.NET.Interfaces.Senders;
 
 namespace Messager.NET.Async.Models.Services;
 
-public class AsyncSenderService
+public sealed class AsyncSenderService
 {
 	public AsyncSenderService(IAsyncSender<SimpleEvent> sender)
 	{

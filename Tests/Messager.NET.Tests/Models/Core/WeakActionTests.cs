@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Messager.NET.Core;
+﻿using Messager.NET.Core;
 
 namespace Messager.NET.Tests.Models.Core;
 

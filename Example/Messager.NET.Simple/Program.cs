@@ -23,6 +23,7 @@ public class Program
 	private static void ConfigurationAction(ContainerBuilder builder)
 	{
 		builder.AddMessager();
+		
 		builder.RegisterType<SimpleReceiverService>().AsSelf().AutoActivate();
 		builder.RegisterType<SimpleSenderService>().AsSelf().AutoActivate();
 	}

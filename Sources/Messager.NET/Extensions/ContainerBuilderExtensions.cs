@@ -12,7 +12,7 @@ namespace Messager.NET.Extensions;
 
 public static class ContainerBuilderExtensions
 {
-	private static readonly Type[] RequestInterfaceTypes =
+	private static readonly HashSet<Type> RequestTypes =
 	[
 		typeof(IRequest<>),
 		typeof(IRequest<,>),
@@ -61,17 +61,25 @@ public static class ContainerBuilderExtensions
 			var userAssemblies = new List<Assembly?>() { Assembly.GetEntryAssembly() };
 			
 			builder.RegisterType<RequestFactory>().As<IRequestFactory>().InstancePerLifetimeScope();
+			builder.RegisterType<AsyncRequestFactory>().As<IAsyncRequestFactory>().InstancePerLifetimeScope();
 
 			foreach (var assembly in userAssemblies.OfType<Assembly>())
 			{
 				builder.RegisterAssemblyTypes(assembly)
-					.Where(t => t is { IsAbstract: false, IsClass: true } &&
-					            t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequest<>)))
+					.Where(t => t is { IsAbstract: false, IsClass: true } && IsRequestType(t))
 					.AsImplementedInterfaces()
 					.InstancePerLifetimeScope();
 			}
 			
 			return builder;
+		}
+		
+		private static bool IsRequestType(Type type)
+		{
+			return type.GetInterfaces()
+				.Where(i => i.IsGenericType)
+				.Select(i => i.GetGenericTypeDefinition())
+				.Any(genericType => RequestTypes.Contains(genericType));
 		}
 	}
 }

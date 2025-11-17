@@ -2,7 +2,6 @@ using Autofac;
 using Messager.NET.Core;
 using Messager.NET.Extensions;
 using Messager.NET.Interfaces.Factories;
-using Messager.NET.Interfaces.Resolvers;
 using Microsoft.Extensions.Logging;
 
 namespace Messager.NET;

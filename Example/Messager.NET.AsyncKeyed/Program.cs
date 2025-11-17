@@ -23,7 +23,8 @@ public static class Program
 	private static void ConfigurationAction(ContainerBuilder builder)
 	{
 		builder.AddMessager();
-		builder.RegisterType<AsyncKeyedReceiverService>().AsSelf().AutoActivate();
-		builder.RegisterType<AsyncKeyedSenderService>().AsSelf().AutoActivate();
+		
+		builder.RegisterType<KeyedReceiverService>().AsSelf().AutoActivate();
+		builder.RegisterType<KeyedSenderService>().AsSelf().AutoActivate();
 	}
 }

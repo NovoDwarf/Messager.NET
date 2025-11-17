@@ -3,11 +3,11 @@ using Messager.NET.Interfaces.Receivers;
 
 namespace Messager.NET.AsyncKeyed.Models.Services;
 
-public sealed class AsyncKeyedReceiverService : IAsyncDisposable
+public sealed class KeyedReceiverService : IAsyncDisposable
 {
 	private readonly IAsyncDisposable _subscription;
 	
-	public AsyncKeyedReceiverService(IAsyncReceiver<string, SimpleEvent> receiver)
+	public KeyedReceiverService(IAsyncReceiver<string, SimpleEvent> receiver)
 	{
 		_subscription = receiver.Subscribe("key", OnMessageReceived);
 	}

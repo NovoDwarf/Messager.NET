@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using Messager.NET.Extensions;
 using Messager.NET.Requests.Services;
 using Microsoft.Extensions.Hosting;
-using System.Reflection;
 
 namespace Messager.NET.Requests;
 
@@ -26,5 +25,6 @@ public class Program
 		builder.AddMessager();
 
 		builder.RegisterType<SimpleRequestService>().AsSelf().AutoActivate();
+		builder.RegisterType<SimpleRequestWithInputService>().AsSelf().AutoActivate();
 	}
 }
