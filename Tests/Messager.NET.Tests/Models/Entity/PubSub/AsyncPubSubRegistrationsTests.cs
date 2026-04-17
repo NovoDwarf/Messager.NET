@@ -25,6 +25,19 @@ public class AsyncPubSubRegistrationsTests
 	}
 
 	[Test]
+	public void AddMessager_ShouldRegisterConfiguredOptionsInServiceCollection()
+	{
+		var services = new ServiceCollection();
+
+		services.AddMessager(options => options.EnableLogging = false);
+
+		using var provider = services.BuildServiceProvider();
+		var options = provider.GetRequiredService<MessagerOptions>();
+
+		Assert.That(options.EnableLogging, Is.False);
+	}
+
+	[Test]
 	public void AddPubSubRegistrations_ShouldRegisterAsyncPubSubAbstractionsInAutofac()
 	{
 		var builder = new ContainerBuilder();
@@ -37,5 +50,18 @@ public class AsyncPubSubRegistrationsTests
 		Assert.That(scope.ResolveOptional<IAsyncReceiver<string>>(), Is.Not.Null);
 		Assert.That(scope.ResolveOptional<IAsyncSender<string, int>>(), Is.Not.Null);
 		Assert.That(scope.ResolveOptional<IAsyncReceiver<string, int>>(), Is.Not.Null);
+	}
+
+	[Test]
+	public void AddMessager_ShouldRegisterConfiguredOptionsInAutofac()
+	{
+		var builder = new ContainerBuilder();
+		builder.AddMessager(options => options.EnableLogging = false);
+
+		using var container = builder.Build();
+		using var scope = container.BeginLifetimeScope();
+		var options = scope.Resolve<MessagerOptions>();
+
+		Assert.That(options.EnableLogging, Is.False);
 	}
 }

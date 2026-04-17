@@ -20,6 +20,10 @@ public static class ContainerBuilderExtensions
 			var options = new MessagerOptions();
 		
 			configureOptions?.Invoke(options);
+
+			builder.RegisterInstance(options)
+				.AsSelf()
+				.SingleInstance();
 		
 			builder.RegisterModule(new MessagerModule(options));
 		

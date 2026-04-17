@@ -8,7 +8,7 @@ namespace Messager.NET;
 
 public sealed class MessagerModule : Module
 {
-	private readonly MessagerOptions? _options;
+	private readonly MessagerOptions _options;
 
 	public MessagerModule(MessagerOptions? options = null)
 	{
@@ -19,8 +19,8 @@ public sealed class MessagerModule : Module
 	{
 		builder.Register(c =>
 			{
-				var factory = _options is { EnableLogging: true } 
-					? c.Resolve<ILoggerFactory>() 
+				var factory = _options.EnableLogging
+					? c.ResolveOptional<ILoggerFactory>() 
 					: null;
 				
 				return new Exchange(factory);
@@ -30,7 +30,6 @@ public sealed class MessagerModule : Module
 			.SingleInstance();
 		
 		builder.AddPubSubRegistrations();
-		builder.AddRequestRegistartions(_options?.RequestAssemblies);
+		builder.AddRequestRegistartions(_options.RequestAssemblies);
 	}
 }
-

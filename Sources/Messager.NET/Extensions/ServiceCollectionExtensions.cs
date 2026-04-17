@@ -23,9 +23,12 @@ public static class ServiceCollectionExtensions
 
 		configureOptions?.Invoke(options);
 
+		services.AddSingleton(options);
+
 		services.AddSingleton<IBrokerFactory, Exchange>(serviceProvider =>
 		{
-			var factory = options is { EnableLogging: true } 
+			var messagerOptions = serviceProvider.GetRequiredService<MessagerOptions>();
+			var factory = messagerOptions.EnableLogging
 				? serviceProvider.GetService<ILoggerFactory>() 
 				: null;
             
