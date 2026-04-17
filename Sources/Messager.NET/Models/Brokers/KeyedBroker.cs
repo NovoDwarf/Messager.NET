@@ -72,7 +72,7 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
 				if (!_handlers.TryGetValue(key, out var list)) 
 					return;
 				
-				list.Remove(new WeakAction<TEvent>(handler));
+				list.RemoveAll(subscriber => subscriber.Matches(handler));
 				_logger?.LogSubscriberRemovedForKey(BrokerType, KeyType, EventType, Id, string.Empty);
 				
 				if (list.Count != 0) 

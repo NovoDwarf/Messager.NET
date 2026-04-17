@@ -348,4 +348,23 @@ public class ExchangeTests
 		sender.Send("Test2");
 		Assert.That(receivedCount, Is.EqualTo(1));
 	}
+
+	[Test]
+	public void KeyedUnsubscribe_ShouldStopReceivingMessages()
+	{
+		var exchange = new Exchange();
+		var sender = exchange.GetKeyedSender<string, int>();
+		var receiver = exchange.GetKeyedReceiver<string, int>();
+
+		var receivedCount = 0;
+
+		var subscription = receiver.Subscribe("key1", _ => receivedCount++);
+
+		sender.Send("key1", 1);
+		Assert.That(receivedCount, Is.EqualTo(1));
+
+		subscription.Dispose();
+		sender.Send("key1", 2);
+		Assert.That(receivedCount, Is.EqualTo(1));
+	}
 }
