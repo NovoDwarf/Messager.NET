@@ -1,7 +1,7 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
+﻿using Messager.NET.DependencyInjection.Extensions;
 using Messager.NET.Extensions;
 using Messager.NET.SimpleKeyed.Models.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Messager.NET.SimpleKeyed;
@@ -10,21 +10,15 @@ public static class Program
 {
 	public static Task Main(string[] args)
 	{
-		var host = Host.CreateApplicationBuilder(args);
-		var provider = new AutofacServiceProviderFactory(ConfigurationAction);
-		
-		host.ConfigureContainer(provider);
-		
-		var app = host.Build();
+		var builder = Host.CreateApplicationBuilder(args);
+		builder.Services.AddMessager();
+		builder.Services.AddSingleton<KeyedReceiverService>();
+		builder.Services.AddSingleton<KeyedSenderService>();
+
+		var app = builder.Build();
+		app.Services.GetRequiredService<KeyedReceiverService>();
+		app.Services.GetRequiredService<KeyedSenderService>();
 
 		return app.RunAsync();
-	}
-
-	private static void ConfigurationAction(ContainerBuilder builder)
-	{
-		builder.AddMessager();
-		
-		builder.RegisterType<KeyedReceiverService>().AsSelf().AutoActivate();
-		builder.RegisterType<KeyedSenderService>().AsSelf().AutoActivate();
 	}
 }

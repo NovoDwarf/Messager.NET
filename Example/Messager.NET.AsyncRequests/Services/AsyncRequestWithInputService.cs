@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using Messager.NET.Interfaces.Requests;
+using Messager.NET.Requests;
 
 namespace Messager.NET.AsyncRequests.Services;
 

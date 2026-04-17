@@ -1,6 +1,4 @@
-﻿using Messager.NET.Interfaces.Requests;
-
-namespace Messager.NET.Requests.Services;
+﻿namespace Messager.NET.Requests.Services;
 
 public class SimpleRequestService
 {

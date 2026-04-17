@@ -1,7 +1,7 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Messager.NET.AsyncRequests.Services;
+﻿using Messager.NET.AsyncRequests.Services;
+using Messager.NET.DependencyInjection.Extensions;
 using Messager.NET.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Messager.NET.AsyncRequests;
@@ -10,21 +10,15 @@ public static class Program
 {
 	public static Task Main(string[] args)
 	{
-		var host = Host.CreateApplicationBuilder(args);
-		var provider = new AutofacServiceProviderFactory(ConfigurationAction);
-		
-		host.ConfigureContainer(provider);
-		
-		var app = host.Build();
+		var builder = Host.CreateApplicationBuilder(args);
+		builder.Services.AddMessager(options => options.RequestAssemblies.Add(typeof(AsyncRequestService).Assembly));
+		builder.Services.AddSingleton<AsyncRequestService>();
+		builder.Services.AddSingleton<AsyncRequestWithInputService>();
+
+		var app = builder.Build();
+		app.Services.GetRequiredService<AsyncRequestService>();
+		app.Services.GetRequiredService<AsyncRequestWithInputService>();
 
 		return app.RunAsync();
-	}
-
-	private static void ConfigurationAction(ContainerBuilder builder)
-	{
-		builder.AddMessager();
-		
-		builder.RegisterType<AsyncRequestService>().AsSelf().AutoActivate();
-		builder.RegisterType<AsyncRequestWithInputService>().AsSelf().AutoActivate();
 	}
 }

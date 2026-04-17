@@ -1,4 +1,4 @@
-﻿using Messager.NET.Interfaces.Senders;
+﻿using Messager.NET.Senders;
 using Messager.NET.SimpleKeyed.Models.Events;
 
 namespace Messager.NET.SimpleKeyed.Models.Services;

@@ -1,5 +1,5 @@
 ﻿using Messager.NET.Example.Models.Events;
-using Messager.NET.Interfaces.Senders;
+using Messager.NET.Senders;
 
 namespace Messager.NET.Example.Models.Services;
 

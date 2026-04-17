@@ -1,6 +1,4 @@
-﻿using Messager.NET.Interfaces.Requests;
-
-namespace Messager.NET.Requests.Models;
+﻿namespace Messager.NET.Requests.Models;
 
 public class SimpleRequest : IRequest<string>
 {

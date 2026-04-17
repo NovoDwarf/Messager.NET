@@ -1,5 +1,5 @@
 ﻿using Messager.NET.AsyncKeyed.Models.Events;
-using Messager.NET.Interfaces.Receivers;
+using Messager.NET.Receivers;
 
 namespace Messager.NET.AsyncKeyed.Models.Services;
 
