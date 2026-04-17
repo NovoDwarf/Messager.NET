@@ -45,12 +45,28 @@ public static class ContainerBuilderExtensions
 				.As(typeof(IReceiver<>))
 				.InstancePerDependency();
 
+			builder.RegisterGeneric(typeof(AsyncSender<>))
+				.As(typeof(IAsyncSender<>))
+				.InstancePerDependency();
+
+			builder.RegisterGeneric(typeof(AsyncReceiver<>))
+				.As(typeof(IAsyncReceiver<>))
+				.InstancePerDependency();
+
 			builder.RegisterGeneric(typeof(KeyedSender<,>))
 				.As(typeof(ISender<,>))
 				.InstancePerDependency();
 
 			builder.RegisterGeneric(typeof(KeyedReceiver<,>))
 				.As(typeof(IReceiver<,>))
+				.InstancePerDependency();
+
+			builder.RegisterGeneric(typeof(AsyncKeyedSender<,>))
+				.As(typeof(IAsyncSender<,>))
+				.InstancePerDependency();
+
+			builder.RegisterGeneric(typeof(AsyncKeyedReceiver<,>))
+				.As(typeof(IAsyncReceiver<,>))
 				.InstancePerDependency();
 			
 			return builder;
@@ -66,7 +82,7 @@ public static class ContainerBuilderExtensions
 			foreach (var assembly in userAssemblies.OfType<Assembly>())
 			{
 				builder.RegisterAssemblyTypes(assembly)
-					.Where(t => t is { IsAbstract: false, IsClass: true } && IsRequestType(t))
+					.Where(t => t is { IsAbstract: false, IsClass: true } && ContainerBuilder.IsRequestType(t))
 					.AsImplementedInterfaces()
 					.InstancePerLifetimeScope();
 			}
