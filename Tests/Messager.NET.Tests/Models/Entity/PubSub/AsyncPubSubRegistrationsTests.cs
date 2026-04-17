@@ -1,7 +1,8 @@
-using Autofac;
+using Messager.NET.DependencyInjection;
+using Messager.NET.DependencyInjection.Extensions;
 using Messager.NET.Extensions;
-using Messager.NET.Interfaces.Receivers;
-using Messager.NET.Interfaces.Senders;
+using Messager.NET.Receivers;
+using Messager.NET.Senders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Messager.NET.Tests.Models.Entity.PubSub;
@@ -33,34 +34,6 @@ public class AsyncPubSubRegistrationsTests
 
 		using var provider = services.BuildServiceProvider();
 		var options = provider.GetRequiredService<MessagerOptions>();
-
-		Assert.That(options.EnableLogging, Is.False);
-	}
-
-	[Test]
-	public void AddPubSubRegistrations_ShouldRegisterAsyncPubSubAbstractionsInAutofac()
-	{
-		var builder = new ContainerBuilder();
-		builder.AddMessager();
-
-		using var container = builder.Build();
-		using var scope = container.BeginLifetimeScope();
-
-		Assert.That(scope.ResolveOptional<IAsyncSender<string>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IAsyncReceiver<string>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IAsyncSender<string, int>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IAsyncReceiver<string, int>>(), Is.Not.Null);
-	}
-
-	[Test]
-	public void AddMessager_ShouldRegisterConfiguredOptionsInAutofac()
-	{
-		var builder = new ContainerBuilder();
-		builder.AddMessager(options => options.EnableLogging = false);
-
-		using var container = builder.Build();
-		using var scope = container.BeginLifetimeScope();
-		var options = scope.Resolve<MessagerOptions>();
 
 		Assert.That(options.EnableLogging, Is.False);
 	}

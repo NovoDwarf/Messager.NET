@@ -1,4 +1,4 @@
-﻿using Messager.NET.Core;
+﻿using Messager.NET.Entities;
 
 namespace Messager.NET.Tests.Models.Core;
 

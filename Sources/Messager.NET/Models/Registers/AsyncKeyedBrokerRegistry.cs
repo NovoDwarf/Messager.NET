@@ -1,5 +1,5 @@
 ﻿using Messager.NET.Models.Brokers;
-using Messager.NET.Utilities.Helpers;
+using Messager.NET.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Models.Registers;
@@ -21,7 +21,6 @@ internal class AsyncKeyedBrokerRegistry
 			return RegistryHelper.GetOrCreate(_brokers, key, () =>
 			{
 				var logger = _loggerFactory?.CreateLogger<AsyncKeyedBroker<TKey, TEvent>>();
-				
 				return new AsyncKeyedBroker<TKey, TEvent>(logger);
 			});
 		}

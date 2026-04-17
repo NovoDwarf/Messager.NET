@@ -1,5 +1,5 @@
 ﻿using Messager.NET.Models.Brokers;
-using Messager.NET.Utilities.Helpers;
+using Messager.NET.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Models.Registers;

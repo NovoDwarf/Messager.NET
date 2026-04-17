@@ -1,7 +1,7 @@
-﻿using Messager.NET.Interfaces.Core;
-using Messager.NET.Interfaces.Receivers;
-using Messager.NET.Interfaces.Senders;
+﻿using Messager.NET.Brokers;
 using Messager.NET.Models.Resources;
+using Messager.NET.Receivers;
+using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Models.Brokers;
@@ -44,7 +44,6 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 			{
 				if (!_handlers.TryGetValue(key, out var list))
 				{ 
-					
 					return ValueTask.CompletedTask;
 				}
 				
@@ -70,9 +69,11 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 			}
 			
 			var removed = list.Remove(handler);
-			
+
 			if (removed)
-			{ }
+			{
+				
+			}
 			
 			if (list.Count == 0)
 			{

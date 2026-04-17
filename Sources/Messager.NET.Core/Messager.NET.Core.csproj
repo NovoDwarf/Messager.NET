@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>preview</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Messager.NET</Title>
+        <Authors>NovoDwarf</Authors>
+        <Copyright>NovoDwarf</Copyright>
+        <TargetFrameworks>net10.0;net9.0</TargetFrameworks>
+        <Description>A lightweight and fast messaging system</Description>
+        <PackageProjectUrl>https://github.com/NovoDwarf/Messager.NET</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/NovoDwarf/Messager.NET/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/NovoDwarf/Messager.NET</RepositoryUrl>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
+        <RootNamespace>Messager.NET</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile></DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile></DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>Messager.NET.Tests</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+
+</Project>

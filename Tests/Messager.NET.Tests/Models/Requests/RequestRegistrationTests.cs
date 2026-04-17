@@ -1,6 +1,6 @@
-using Autofac;
+using Messager.NET.DependencyInjection.Extensions;
 using Messager.NET.Extensions;
-using Messager.NET.Interfaces.Requests;
+using Messager.NET.Requests;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Messager.NET.Tests.Models.Requests;
@@ -32,20 +32,6 @@ public class RequestRegistrationTests
 		using var provider = services.BuildServiceProvider();
 
 		Assert.That(provider.GetService<IRequest<string>>(), Is.Null);
-	}
-
-	[Test]
-	public void AutofacAddMessager_ShouldRegisterRequestsFromConfiguredAssemblies()
-	{
-		var builder = new ContainerBuilder();
-		builder.AddMessager(options => options.RequestAssemblies.Add(typeof(TestRequest).Assembly));
-
-		using var container = builder.Build();
-		using var scope = container.BeginLifetimeScope();
-		var request = scope.ResolveOptional<IRequest<string>>();
-
-		Assert.That(request, Is.Not.Null);
-		Assert.That(request!.Invoke(), Is.EqualTo("pong"));
 	}
 }
 

@@ -1,5 +1,5 @@
-﻿using Messager.NET.Interfaces.Receivers;
-using Messager.NET.Interfaces.Senders;
+﻿using Messager.NET.Receivers;
+using Messager.NET.Senders;
 
 namespace Messager.NET.Benchmarks.Benchmarks;
 

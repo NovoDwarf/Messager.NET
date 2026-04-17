@@ -1,7 +1,7 @@
-﻿using Messager.NET.Core;
-using Messager.NET.Interfaces.Factories;
-using Messager.NET.Interfaces.Receivers;
-using Messager.NET.Interfaces.Senders;
+﻿using Messager.NET.Entities;
+using Messager.NET.Factories;
+using Messager.NET.Receivers;
+using Messager.NET.Senders;
 
 namespace Messager.NET.Tests.Models.Core;
 

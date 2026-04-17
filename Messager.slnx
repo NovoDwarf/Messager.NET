@@ -7,13 +7,21 @@
     <Project Path="Example/Messager.NET.SimpleKeyed/Messager.NET.SimpleKeyed.csproj" />
   </Folder>
   <Folder Name="/Examples/Requests/">
-    <Project Path="Example/Messager.NET.AsyncRequests/Messager.NET.AsyncRequests.csproj" Type="C#" />
+    <Project Path="Example/Messager.NET.AsyncRequests/Messager.NET.AsyncRequests.csproj" />
     <Project Path="Example/Messager.NET.Requests/Messager.NET.Requests.csproj" />
   </Folder>
-  <Folder Name="/Sources/">
-    <Project Path="Sources/Messager.NET.Analyzer/Messager.NET.Analyzer.csproj" />
-    <Project Path="Sources/Messager.NET.Benchmarks/Messager.NET.Benchmarks.csproj" Type="C#" />
+  <Folder Name="/Sources/" />
+  <Folder Name="/Sources/Integrations/">
+    <Project Path="Sources/Messager.NET.Autofac/Messager.NET.Autofac.csproj" />
+    <Project Path="Sources/Messager.NET.DependencyInjection/Messager.NET.DependencyInjection.csproj" />
+  </Folder>
+  <Folder Name="/Sources/Messager/">
+    <Project Path="Sources/Messager.NET.Core/Messager.NET.Core.csproj" />
     <Project Path="Sources/Messager.NET/Messager.NET.csproj" />
+  </Folder>
+  <Folder Name="/Sources/Utilities/">
+    <Project Path="Sources/Messager.NET.Analyzer/Messager.NET.Analyzer.csproj" />
+    <Project Path="Sources/Messager.NET.Benchmarks/Messager.NET.Benchmarks.csproj" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/Messager.NET.Tests/Messager.NET.Tests.csproj" />

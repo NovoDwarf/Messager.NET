@@ -12,7 +12,7 @@ A lightweight and fast messaging system (pub/sub) for .NET 10 with support for:
 - Keyed and unkeyed typed events;
 - Synchronous and asynchronous senders/receivers;
 - Lazy broker creation for each event type;
-- Integration with DI ([**Autofac**](https://github.com/autofac/Autofac));
+- Optional DI integration via separate packages;
 - Single point of contact — **Exchange**.
 
 The goal is simple, transparent, and thread-safe event exchange between services/modules without unnecessary coupling.
@@ -21,7 +21,7 @@ The goal is simple, transparent, and thread-safe event exchange between services
 
 - Refactor the code to make it more readable.
 - Add self-made code analyzers for preventing common mistakes.
-- Consider decoupling from [**Autofac**](https://github.com/autofac/Autofac) and switching to the simpler [**Microsoft.Extensions.DependencyInjection**](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/).
+- Expand integrations for additional DI providers beyond [**Microsoft.Extensions.DependencyInjection**](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/).
 - Support for middleware and event pipelines (logging, filtering, retrievals).
 - Other message handling options (e.g., **Channel**, **IObservable**).
 - Enhanced diagnostics and metrics for brokers and subscribers.
