@@ -7,6 +7,7 @@ using Messager.NET.Interfaces.Senders;
 using Messager.NET.Models.Entity.PubSub.Receivers;
 using Messager.NET.Models.Entity.PubSub.Senders;
 using Messager.NET.Models.Factory;
+using Messager.NET.Utilities.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -14,15 +15,7 @@ namespace Messager.NET.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-	private static readonly HashSet<Type> RequestTypes =
-	[
-		typeof(IRequest<>),
-		typeof(IRequest<,>),
-		typeof(IRequest<,,>),
-		typeof(IAsyncRequest<>),
-		typeof(IAsyncRequest<,>),
-		typeof(IAsyncRequest<,,>)
-	];
+
 
 	public static IServiceCollection AddMessager(this IServiceCollection services, Action<MessagerOptions>? configureOptions = null)
 	{
@@ -67,11 +60,12 @@ public static class ServiceCollectionExtensions
 		foreach (var assembly in assemblies.Distinct())
 		{
 			var requestTypes = assembly.GetTypes()
-				.Where(t => t is { IsAbstract: false, IsClass: true } && IsRequestType(t));
+				.Where(t => t is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(t));
 
 			foreach (var type in requestTypes)
 			{
-				var interfaces = type.GetInterfaces().Where(IsRequestInterface);
+				var interfaces = type.GetInterfaces().Where(ResolveHelper.IsRequestInterface);
+
 				foreach (var interfaceType in interfaces)
 				{
 					services.AddScoped(interfaceType, type);
@@ -80,13 +74,6 @@ public static class ServiceCollectionExtensions
 		}
 	}
 
-	private static bool IsRequestType(Type type)
-	{
-		return type.GetInterfaces()
-			.Any(IsRequestInterface);
-	}
 
-	private static bool IsRequestInterface(Type type) =>
-		type.IsGenericType && RequestTypes.Contains(type.GetGenericTypeDefinition());
 
 }

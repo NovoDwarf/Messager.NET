@@ -7,21 +7,12 @@ using Messager.NET.Interfaces.Senders;
 using Messager.NET.Models.Entity.PubSub.Receivers;
 using Messager.NET.Models.Entity.PubSub.Senders;
 using Messager.NET.Models.Factory;
+using Messager.NET.Utilities.Helpers;
 
 namespace Messager.NET.Extensions;
 
 public static class ContainerBuilderExtensions
 {
-	private static readonly HashSet<Type> RequestTypes =
-	[
-		typeof(IRequest<>),
-		typeof(IRequest<,>),
-		typeof(IRequest<,,>),
-		typeof(IAsyncRequest<>),
-		typeof(IAsyncRequest<,>),
-		typeof(IAsyncRequest<,,>)
-	];
-	
 	extension(ContainerBuilder builder)
 	{
 		public ContainerBuilder AddMessager(Action<MessagerOptions>? configureOptions = null)
@@ -80,21 +71,12 @@ public static class ContainerBuilderExtensions
 			foreach (var assembly in assemblies?.Distinct() ?? [])
 			{
 				builder.RegisterAssemblyTypes(assembly)
-					.Where(t => t is { IsAbstract: false, IsClass: true } && IsRequestType(t))
-					.As(t => t.GetInterfaces().Where(IsRequestInterface))
+					.Where(t => t is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(t))
+					.As(t => t.GetInterfaces().Where(ResolveHelper.IsRequestInterface))
 					.InstancePerLifetimeScope();
 			}
 			
 			return builder;
 		}
-		
-		private static bool IsRequestType(Type type)
-		{
-			return type.GetInterfaces()
-				.Any(IsRequestInterface);
-		}
-
-		private static bool IsRequestInterface(Type type) =>
-			type.IsGenericType && RequestTypes.Contains(type.GetGenericTypeDefinition());
 	}
 }
