@@ -26,15 +26,16 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
 	
 	public void Send(TEvent evt)
 	{
-		TryRemove();
+		List<WeakAction<TEvent>> activeHandlers;
 		
 		lock (_locker)
 		{
-			var activeHandlers = _handlers.ToList();
-			
-			foreach (var sub in activeHandlers) 
-				TryInvoke(sub, evt);
+			TryRemove();
+			activeHandlers = _handlers.ToList();
 		}
+
+		foreach (var sub in activeHandlers) 
+			TryInvoke(sub, evt);
 	}
 
 	public IDisposable Subscribe(Action<TEvent> handler)
@@ -61,11 +62,8 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
 
 		if (removedCount <= 0) 
 			return;
-		
-		lock (_locker)
-		{
-			_logger?.LogSubscribersRemoved(BrokerType, EventType, Id, removedCount);
-		}
+
+		_logger?.LogSubscribersRemoved(BrokerType, EventType, Id, removedCount);
 	}
 
 	private void TryInvoke(WeakAction<TEvent> sub, TEvent evt)
@@ -76,10 +74,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
 		}
 		catch (Exception ex)
 		{
-			lock (_locker)
-			{
-				_logger?.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
-			}
+			_logger?.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
 		}
 	}
 }
