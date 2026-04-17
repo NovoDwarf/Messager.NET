@@ -1,0 +1,48 @@
+<Project>
+
+    <PropertyGroup>
+        <MessagerSupportedTargetFrameworks>net8.0;net9.0;net10.0</MessagerSupportedTargetFrameworks>
+        <MessagerVersion>1.0.0</MessagerVersion>
+        <MessagerAssemblyVersion>1.0.0.0</MessagerAssemblyVersion>
+        <MessagerAuthors>NovoDwarf</MessagerAuthors>
+        <MessagerCopyright>NovoDwarf</MessagerCopyright>
+        <MessagerRepositoryUrl>https://github.com/NovoDwarf/Messager.NET</MessagerRepositoryUrl>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(MSBuildProjectDirectory)' != '' and $([System.String]::Copy('$(MSBuildProjectDirectory)').Contains('\Sources\Messager.NET'))">
+        <Version>$(MessagerVersion)</Version>
+        <AssemblyVersion>$(MessagerAssemblyVersion)</AssemblyVersion>
+        <FileVersion>$(MessagerAssemblyVersion)</FileVersion>
+        <Authors>$(MessagerAuthors)</Authors>
+        <Copyright>$(MessagerCopyright)</Copyright>
+        <PackageProjectUrl>$(MessagerRepositoryUrl)</PackageProjectUrl>
+        <RepositoryUrl>$(MessagerRepositoryUrl)</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Core'">
+        <PackageId>Messager.NET.Core</PackageId>
+        <Title>Messager.NET.Core</Title>
+        <Description>Core contracts for Messager.NET.</Description>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET'">
+        <PackageId>Messager.NET</PackageId>
+        <Title>Messager.NET</Title>
+        <Description>Runtime implementation for Messager.NET.</Description>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection'">
+        <PackageId>Messager.NET.Microsoft.DependencyInjection</PackageId>
+        <Title>Messager.NET.Microsoft.DependencyInjection</Title>
+        <Description>Microsoft.Extensions.DependencyInjection integration for Messager.NET.</Description>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Autofac'">
+        <PackageId>Messager.NET.Autofac</PackageId>
+        <Title>Messager.NET.Autofac</Title>
+        <Description>Autofac integration for Messager.NET.</Description>
+    </PropertyGroup>
+
+</Project>

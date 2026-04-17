@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 
-namespace Messager.NET.DependencyInjection;
+namespace Messager.NET;
 
 public class MessagerOptions
 {

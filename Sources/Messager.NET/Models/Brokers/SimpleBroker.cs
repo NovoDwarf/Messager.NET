@@ -11,7 +11,7 @@ namespace Messager.NET.Models.Brokers;
 public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TEvent>
 {
 	private readonly List<WeakAction<TEvent>> _handlers = [];
-	private readonly Lock _locker = new();
+	private readonly object _locker = new();
 	private readonly ILogger<SimpleBroker<TEvent>>? _logger;
 
 	public SimpleBroker(ILogger<SimpleBroker<TEvent>>? logger = null)

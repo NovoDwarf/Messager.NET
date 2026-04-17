@@ -12,7 +12,7 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
 	where TKey : notnull
 {
 	private readonly Dictionary<TKey, List<WeakAction<TEvent>>> _handlers = new();
-	private readonly Lock _locker = new();
+	private readonly object _locker = new();
 	private readonly ILogger<KeyedBroker<TKey, TEvent>>? _logger;
 
 	public KeyedBroker(ILogger<KeyedBroker<TKey, TEvent>>? logger = null)

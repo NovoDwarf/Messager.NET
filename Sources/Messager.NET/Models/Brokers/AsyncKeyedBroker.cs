@@ -10,7 +10,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 	where TKey : notnull
 {
 	private readonly Dictionary<TKey, List<Func<TEvent, ValueTask>>> _handlers = new();
-	private readonly Lock _locker = new();
+	private readonly object _locker = new();
 	private readonly ILogger<AsyncKeyedBroker<TKey, TEvent>>? _logger;
 
 	public AsyncKeyedBroker(ILogger<AsyncKeyedBroker<TKey, TEvent>>? logger = null)

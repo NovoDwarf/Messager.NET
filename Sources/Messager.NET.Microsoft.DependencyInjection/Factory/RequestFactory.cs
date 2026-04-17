@@ -2,7 +2,7 @@ using Messager.NET.Factories;
 using Messager.NET.Requests;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Messager.NET.DependencyInjection.Factory;
+namespace Messager.NET.Microsoft.DependencyInjection.Factory;
 
 public class RequestFactory : IRequestFactory
 {

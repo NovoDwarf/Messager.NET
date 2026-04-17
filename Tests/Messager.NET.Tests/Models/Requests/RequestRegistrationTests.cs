@@ -1,5 +1,4 @@
-using Messager.NET.DependencyInjection.Extensions;
-using Messager.NET.Extensions;
+using Messager.NET.Microsoft.DependencyInjection.Extensions;
 using Messager.NET.Requests;
 using Microsoft.Extensions.DependencyInjection;
 

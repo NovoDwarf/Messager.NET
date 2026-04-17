@@ -1,8 +1,15 @@
 using Messager.NET.Entities;
+using Messager.NET.Factories;
+using Messager.NET.Microsoft.DependencyInjection.Factory;
+using Messager.NET.Models.PubSub.Receivers;
+using Messager.NET.Models.PubSub.Senders;
+using Messager.NET.Receivers;
+using Messager.NET.Senders;
+using Messager.NET.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Messager.NET.DependencyInjection.Extensions;
+namespace Messager.NET.Microsoft.DependencyInjection.Extensions;
 
 public static class ServiceCollectionExtensions
 {

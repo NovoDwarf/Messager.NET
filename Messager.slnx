@@ -13,7 +13,7 @@
   <Folder Name="/Sources/" />
   <Folder Name="/Sources/Integrations/">
     <Project Path="Sources/Messager.NET.Autofac/Messager.NET.Autofac.csproj" />
-    <Project Path="Sources/Messager.NET.DependencyInjection/Messager.NET.DependencyInjection.csproj" />
+    <Project Path="Sources/Messager.NET.Microsoft.DependencyInjection/Messager.NET.Microsoft.DependencyInjection.csproj" />
   </Folder>
   <Folder Name="/Sources/Messager/">
     <Project Path="Sources/Messager.NET.Core/Messager.NET.Core.csproj" />

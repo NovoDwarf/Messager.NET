@@ -13,7 +13,7 @@
 public sealed class DisposableList : IDisposable
 {
     private readonly List<IDisposable> _disposables = [];
-    private readonly Lock _lock = new();
+    private readonly object _lock = new();
     
     private bool _disposed;
 

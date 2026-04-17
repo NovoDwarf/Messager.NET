@@ -7,7 +7,7 @@ namespace Messager.NET.Models.Registers;
 internal class SimpleBrokerRegistry
 {
 	private readonly Dictionary<Type, object> _brokers = new();
-	private readonly Lock _locker = new();
+	private readonly object _locker = new();
 	
 	private readonly ILoggerFactory? _loggerFactory;
 	private readonly ILogger<SimpleBrokerRegistry>? _logger;

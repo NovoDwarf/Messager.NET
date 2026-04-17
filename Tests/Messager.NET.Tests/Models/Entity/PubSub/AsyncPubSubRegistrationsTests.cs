@@ -1,6 +1,4 @@
-using Messager.NET.DependencyInjection;
-using Messager.NET.DependencyInjection.Extensions;
-using Messager.NET.Extensions;
+using Messager.NET.Microsoft.DependencyInjection.Extensions;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,11 +17,14 @@ public class AsyncPubSubRegistrationsTests
 
 		using var provider = services.BuildServiceProvider();
 
-		Assert.That(provider.GetService<IAsyncSender<string>>(), Is.Not.Null);
-		Assert.That(provider.GetService<IAsyncReceiver<string>>(), Is.Not.Null);
-		Assert.That(provider.GetService<IAsyncSender<string, int>>(), Is.Not.Null);
-		Assert.That(provider.GetService<IAsyncReceiver<string, int>>(), Is.Not.Null);
-	}
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(provider.GetService<IAsyncSender<string>>(), Is.Not.Null);
+            Assert.That(provider.GetService<IAsyncReceiver<string>>(), Is.Not.Null);
+            Assert.That(provider.GetService<IAsyncSender<string, int>>(), Is.Not.Null);
+            Assert.That(provider.GetService<IAsyncReceiver<string, int>>(), Is.Not.Null);
+        }
+    }
 
 	[Test]
 	public void AddMessager_ShouldRegisterConfiguredOptionsInServiceCollection()

@@ -1,6 +1,6 @@
 using Messager.NET.Requests;
 
-namespace Messager.NET.DependencyInjection.Utilities;
+namespace Messager.NET.Utilities;
 
 public static class ResolveHelper
 {

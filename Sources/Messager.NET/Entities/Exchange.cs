@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Messager.NET.Entities;
 
-internal sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
+public sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
 {
     private readonly SimpleBrokerRegistry _simpleBrokers;
     private readonly KeyedBrokerRegistry _keyedBrokers;
