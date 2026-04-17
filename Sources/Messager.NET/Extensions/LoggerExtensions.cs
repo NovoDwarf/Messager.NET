@@ -17,6 +17,7 @@ internal static partial class LoggerExtensions
 
     [LoggerMessage(LogLevel.Error, "[{BrokerType}<{EventType}> [{Id}]] Error invoking handler for event")]
     internal static partial void LogErrorInvokingHandler(this ILogger logger, Exception ex, string brokerType, string eventType, Guid id);
+  
     #endregion
 
     #region Keyed
@@ -41,7 +42,6 @@ internal static partial class LoggerExtensions
 
     [LoggerMessage(LogLevel.Error, "[{BrokerType}<{KeyType}, {EventType}> [{Id}]] Error invoking handler for event")]
     internal static partial void LogErrorInvokingHandlerForKey(this ILogger logger, Exception ex, string brokerType, string keyType, string eventType, Guid id);
-
-
+    
     #endregion
 }
