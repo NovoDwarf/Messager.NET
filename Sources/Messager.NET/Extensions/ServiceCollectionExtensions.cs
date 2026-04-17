@@ -42,7 +42,7 @@ public static class ServiceCollectionExtensions
 		services.AddSingleton<IKeyedBrokerFactory>(serviceProvider => (Exchange)serviceProvider.GetRequiredService<IBrokerFactory>());
 
 		AddPubSubRegistrations(services);
-		AddRequestRegistrations(services);
+		AddRequestRegistrations(services, options.RequestAssemblies);
 
 		return services;
 	}
@@ -59,25 +59,23 @@ public static class ServiceCollectionExtensions
 		services.AddTransient(typeof(IAsyncReceiver<,>), typeof(AsyncKeyedReceiver<,>));
 	}
 	
-	private static void AddRequestRegistrations(IServiceCollection services)
+	private static void AddRequestRegistrations(IServiceCollection services, IEnumerable<Assembly> assemblies)
 	{
 		services.AddScoped<IRequestFactory, RequestFactory>();
 		services.AddScoped<IAsyncRequestFactory, AsyncRequestFactory>();
 
-		var entryAssembly = Assembly.GetEntryAssembly();
-		
-		if (entryAssembly == null) 
-			return;
-		
-		var requestTypes = entryAssembly.GetTypes()
-			.Where(t => t is { IsAbstract: false, IsClass: true } && IsRequestType(t));
-
-		foreach (var type in requestTypes)
+		foreach (var assembly in assemblies.Distinct())
 		{
-			var interfaces = type.GetInterfaces();
-			foreach (var interfaceType in interfaces)
+			var requestTypes = assembly.GetTypes()
+				.Where(t => t is { IsAbstract: false, IsClass: true } && IsRequestType(t));
+
+			foreach (var type in requestTypes)
 			{
-				services.AddScoped(interfaceType, type);
+				var interfaces = type.GetInterfaces().Where(IsRequestInterface);
+				foreach (var interfaceType in interfaces)
+				{
+					services.AddScoped(interfaceType, type);
+				}
 			}
 		}
 	}
@@ -85,9 +83,10 @@ public static class ServiceCollectionExtensions
 	private static bool IsRequestType(Type type)
 	{
 		return type.GetInterfaces()
-			.Where(i => i.IsGenericType)
-			.Select(i => i.GetGenericTypeDefinition())
-			.Any(genericType => RequestTypes.Contains(genericType));
+			.Any(IsRequestInterface);
 	}
+
+	private static bool IsRequestInterface(Type type) =>
+		type.IsGenericType && RequestTypes.Contains(type.GetGenericTypeDefinition());
 
 }

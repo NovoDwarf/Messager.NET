@@ -30,8 +30,7 @@ public sealed class MessagerModule : Module
 			.SingleInstance();
 		
 		builder.AddPubSubRegistrations();
-		builder.AddRequestRegistartions();
+		builder.AddRequestRegistartions(_options?.RequestAssemblies);
 	}
 }
-
 

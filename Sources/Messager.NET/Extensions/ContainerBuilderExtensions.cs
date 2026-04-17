@@ -72,18 +72,16 @@ public static class ContainerBuilderExtensions
 			return builder;
 		}
 
-		public ContainerBuilder AddRequestRegistartions()
+		public ContainerBuilder AddRequestRegistartions(IEnumerable<Assembly>? assemblies = null)
 		{
-			var userAssemblies = new List<Assembly?>() { Assembly.GetEntryAssembly() };
-			
 			builder.RegisterType<RequestFactory>().As<IRequestFactory>().InstancePerLifetimeScope();
 			builder.RegisterType<AsyncRequestFactory>().As<IAsyncRequestFactory>().InstancePerLifetimeScope();
 
-			foreach (var assembly in userAssemblies.OfType<Assembly>())
+			foreach (var assembly in assemblies?.Distinct() ?? [])
 			{
 				builder.RegisterAssemblyTypes(assembly)
-					.Where(t => t is { IsAbstract: false, IsClass: true } && ContainerBuilder.IsRequestType(t))
-					.AsImplementedInterfaces()
+					.Where(t => t is { IsAbstract: false, IsClass: true } && IsRequestType(t))
+					.As(t => t.GetInterfaces().Where(IsRequestInterface))
 					.InstancePerLifetimeScope();
 			}
 			
@@ -93,9 +91,10 @@ public static class ContainerBuilderExtensions
 		private static bool IsRequestType(Type type)
 		{
 			return type.GetInterfaces()
-				.Where(i => i.IsGenericType)
-				.Select(i => i.GetGenericTypeDefinition())
-				.Any(genericType => RequestTypes.Contains(genericType));
+				.Any(IsRequestInterface);
 		}
+
+		private static bool IsRequestInterface(Type type) =>
+			type.IsGenericType && RequestTypes.Contains(type.GetGenericTypeDefinition());
 	}
 }
