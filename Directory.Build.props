@@ -1,14 +1,16 @@
 <Project>
 
     <PropertyGroup>
-        <MessagerSupportedTargetFrameworks>net8.0;net9.0;net10.0</MessagerSupportedTargetFrameworks>
-        <MessagerVersion>1.0.0</MessagerVersion>
-        <MessagerAssemblyVersion>1.0.0.0</MessagerAssemblyVersion>
+        <MessagerSupportedTargetFrameworks>net10.0;net11.0</MessagerSupportedTargetFrameworks>
+        <MessagerVersion>1.0.1</MessagerVersion>
+        <MessagerAssemblyVersion>1.0.0.1</MessagerAssemblyVersion>
         <MessagerAuthors>NovoDwarf</MessagerAuthors>
         <MessagerCopyright>NovoDwarf</MessagerCopyright>
         <MessagerRepositoryUrl>https://github.com/NovoDwarf/Messager.NET</MessagerRepositoryUrl>
     </PropertyGroup>
 
+    <Import Project="$(MSBuildThisFileDirectory)Messager.Dependencies.props" Condition="Exists('$(MSBuildThisFileDirectory)Messager.Dependencies.props')" />
+    
     <PropertyGroup Condition="'$(MSBuildProjectDirectory)' != '' and $([System.String]::Copy('$(MSBuildProjectDirectory)').Contains('\Sources\Messager.NET'))">
         <Version>$(MessagerVersion)</Version>
         <AssemblyVersion>$(MessagerAssemblyVersion)</AssemblyVersion>

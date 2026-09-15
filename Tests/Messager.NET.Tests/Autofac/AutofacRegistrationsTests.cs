@@ -19,15 +19,18 @@ public class AutofacRegistrationsTests
 		using var container = builder.Build();
 		using var scope = container.BeginLifetimeScope();
 
-		Assert.That(scope.ResolveOptional<ISender<string>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IReceiver<string>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IAsyncSender<string>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IAsyncReceiver<string>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<ISender<string, int>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IReceiver<string, int>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IAsyncSender<string, int>>(), Is.Not.Null);
-		Assert.That(scope.ResolveOptional<IAsyncReceiver<string, int>>(), Is.Not.Null);
-	}
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(scope.ResolveOptional<ISender<string>>(), Is.Not.Null);
+            Assert.That(scope.ResolveOptional<IReceiver<string>>(), Is.Not.Null);
+            Assert.That(scope.ResolveOptional<IAsyncSender<string>>(), Is.Not.Null);
+            Assert.That(scope.ResolveOptional<IAsyncReceiver<string>>(), Is.Not.Null);
+            Assert.That(scope.ResolveOptional<ISender<string, int>>(), Is.Not.Null);
+            Assert.That(scope.ResolveOptional<IReceiver<string, int>>(), Is.Not.Null);
+            Assert.That(scope.ResolveOptional<IAsyncSender<string, int>>(), Is.Not.Null);
+            Assert.That(scope.ResolveOptional<IAsyncReceiver<string, int>>(), Is.Not.Null);
+        }
+    }
 
 	[Test]
 	public void AddMessager_ShouldRegisterConfiguredOptions()

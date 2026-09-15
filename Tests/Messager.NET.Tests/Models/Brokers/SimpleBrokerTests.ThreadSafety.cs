@@ -25,7 +25,7 @@ public class SimpleBrokerTestsThreadSafety
 				}
 			}));
 
-		Assert.DoesNotThrowAsync(async () => await Task.WhenAll(tasks));
+		await Assert.DoesNotThrowAsync(async () => await Task.WhenAll(tasks));
 	}
 
 	private static void CreateCollectableSubscription(SimpleBroker<int> broker)

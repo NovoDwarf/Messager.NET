@@ -45,12 +45,13 @@ public partial class UnsubscriberAsyncTests
     }
 
 	[Test]
-	public void DisposeAsync_WithThrowingFunc_ShouldPropagateException()
+	public async Task DisposeAsync_WithThrowingFunc_ShouldPropagateException()
 	{
 		var unsubscriber = new UnsubscriberAsync(() => throw new InvalidOperationException("Test exception"));
-
-		Assert.ThrowsAsync<InvalidOperationException>(async () => await unsubscriber.DisposeAsync());
-		Assert.That(unsubscriber.IsDisposed, Is.True);
+       
+		await Assert.ThrowsAsync<InvalidOperationException>(async () => await unsubscriber.DisposeAsync());
+		
+        Assert.That(unsubscriber.IsDisposed, Is.True);
 	}
 
 	[Test]
@@ -127,10 +128,10 @@ public partial class UnsubscriberAsyncTests
 				: ValueTask.CompletedTask;
 		});
 
-		Assert.ThrowsAsync<InvalidOperationException>(async () => await unsubscriber.DisposeAsync());
-		
-		Assert.DoesNotThrowAsync(async () => await unsubscriber.DisposeAsync());
-		Assert.DoesNotThrowAsync(async () => await unsubscriber.DisposeAsync());
+		_ = Assert.ThrowsAsync<InvalidOperationException>(async () => await unsubscriber.DisposeAsync()).Result;
+
+		Assert.DoesNotThrowAsync(async () => await unsubscriber.DisposeAsync()).Wait();
+		Assert.DoesNotThrowAsync(async () => await unsubscriber.DisposeAsync()).Wait();
 
         using (Assert.EnterMultipleScope())
         {
@@ -150,7 +151,7 @@ public partial class UnsubscriberAsyncTests
 			await Task.Delay(Timeout.Infinite, cts.Token);
 		});
 
-		Assert.DoesNotThrowAsync(async () => await unsubscriber.DisposeAsync());
+		Assert.DoesNotThrowAsync(async () => await unsubscriber.DisposeAsync()).Wait();
 		Assert.That(unsubscriber.IsDisposed, Is.True);
 		
 		return Task.CompletedTask;

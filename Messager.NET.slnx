@@ -1,14 +1,11 @@
 <Solution>
-  <Folder Name="/Examples/" />
-  <Folder Name="/Examples/PubSub/">
-    <Project Path="Example/Messager.NET.Async/Messager.NET.Async.csproj" />
-    <Project Path="Example/Messager.NET.AsyncKeyed/Messager.NET.AsyncKeyed.csproj" />
-    <Project Path="Example/Messager.NET.Simple/Messager.NET.Simple.csproj" />
-    <Project Path="Example/Messager.NET.SimpleKeyed/Messager.NET.SimpleKeyed.csproj" />
-  </Folder>
-  <Folder Name="/Examples/Requests/">
-    <Project Path="Example/Messager.NET.AsyncRequests/Messager.NET.AsyncRequests.csproj" />
-    <Project Path="Example/Messager.NET.Requests/Messager.NET.Requests.csproj" />
+  <Folder Name="/Examples/">
+    <Project Path="Examples/Messager.NET.Async/Messager.NET.Async.csproj" />
+    <Project Path="Examples/Messager.NET.AsyncKeyed/Messager.NET.AsyncKeyed.csproj" />
+    <Project Path="Examples/Messager.NET.AsyncRequests/Messager.NET.AsyncRequests.csproj" />
+    <Project Path="Examples/Messager.NET.Requests/Messager.NET.Requests.csproj" />
+    <Project Path="Examples/Messager.NET.Simple/Messager.NET.Simple.csproj" />
+    <Project Path="Examples/Messager.NET.SimpleKeyed/Messager.NET.SimpleKeyed.csproj" />
   </Folder>
   <Folder Name="/Sources/" />
   <Folder Name="/Sources/Integrations/">

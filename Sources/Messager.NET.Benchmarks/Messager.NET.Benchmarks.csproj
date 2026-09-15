@@ -8,9 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
-      <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.3.26207.106" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.16.0-preview.1" />
+      <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-rc.1.26425.128" />
     </ItemGroup>
 
     <ItemGroup>

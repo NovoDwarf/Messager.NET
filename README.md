@@ -2,8 +2,6 @@
 
 ## Overview
 
-[[EN](README.md)|[RU](README_RU.md)]
-
 > [!WARNING]
 > THE PROJECT IS IN EARLY DEVELOPMENT, SO BUGS AND UB ARE INEVITABLE, AS WELL AS BAD CODE OR OTHER ERRORS
 
@@ -28,6 +26,9 @@ The goal is simple, transparent, and thread-safe event exchange between services
 - Enhanced subscriber error handling policies.
 
 ## How it works
+
+> [!WARNING]
+> WORK IN PROGRESS
 
 ### Pub/Sub
 
