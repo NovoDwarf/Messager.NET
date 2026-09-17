@@ -2,9 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>$(MessagerSupportedTargetFrameworks)</TargetFrameworks>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <TargetFrameworks>$(ProjectTargetFrameworks)</TargetFrameworks>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 

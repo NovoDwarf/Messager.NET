@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <LangVersion>latest</LangVersion>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>$(ProjectTargetFrameworks)</TargetFrameworks>
         <IsPackable>false</IsPackable>
-        <TargetFrameworks>$(MessagerSupportedTargetFrameworks)</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,48 +1,46 @@
 <Project>
 
     <PropertyGroup>
-        <MessagerSupportedTargetFrameworks>net10.0;net11.0</MessagerSupportedTargetFrameworks>
-        <MessagerVersion>1.0.1</MessagerVersion>
-        <MessagerAssemblyVersion>1.0.0.1</MessagerAssemblyVersion>
-        <MessagerAuthors>NovoDwarf</MessagerAuthors>
-        <MessagerCopyright>NovoDwarf</MessagerCopyright>
-        <MessagerRepositoryUrl>https://github.com/NovoDwarf/Messager.NET</MessagerRepositoryUrl>
+        <ProjectTargetFrameworks>net10.0;net11.0</ProjectTargetFrameworks>
+        <ProjectVersion>1.0.1</ProjectVersion>
+        <ProjectAssemblyVersion>1.0.0.1</ProjectAssemblyVersion>
+        <ProjectAuthors>NovoDwarf</ProjectAuthors>
+        <ProjectCopyright>NovoDwarf</ProjectCopyright>
+        <ProjectRepositoryUrl>https://github.com/NovoDwarf/MathForge</ProjectRepositoryUrl>
     </PropertyGroup>
 
-    <Import Project="$(MSBuildThisFileDirectory)Messager.Dependencies.props" Condition="Exists('$(MSBuildThisFileDirectory)Messager.Dependencies.props')" />
-    
-    <PropertyGroup Condition="'$(MSBuildProjectDirectory)' != '' and $([System.String]::Copy('$(MSBuildProjectDirectory)').Contains('\Sources\Messager.NET'))">
-        <Version>$(MessagerVersion)</Version>
-        <AssemblyVersion>$(MessagerAssemblyVersion)</AssemblyVersion>
-        <FileVersion>$(MessagerAssemblyVersion)</FileVersion>
-        <Authors>$(MessagerAuthors)</Authors>
-        <Copyright>$(MessagerCopyright)</Copyright>
-        <PackageProjectUrl>$(MessagerRepositoryUrl)</PackageProjectUrl>
-        <RepositoryUrl>$(MessagerRepositoryUrl)</RepositoryUrl>
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IsPackable)' != 'false'">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Authors>$(ProjectAuthors)</Authors>
+        <Copyright>$(ProjectCopyright)</Copyright>
+        <PackageProjectUrl>$(ProjectRepositoryUrl)</PackageProjectUrl>
+        <RepositoryUrl>$(ProjectRepositoryUrl)</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
-
+    
     <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Core'">
-        <PackageId>Messager.NET.Core</PackageId>
         <Title>Messager.NET.Core</Title>
         <Description>Core contracts for Messager.NET.</Description>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET'">
-        <PackageId>Messager.NET</PackageId>
         <Title>Messager.NET</Title>
         <Description>Runtime implementation for Messager.NET.</Description>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection'">
-        <PackageId>Messager.NET.Microsoft.DependencyInjection</PackageId>
         <Title>Messager.NET.Microsoft.DependencyInjection</Title>
         <Description>Microsoft.Extensions.DependencyInjection integration for Messager.NET.</Description>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Autofac'">
-        <PackageId>Messager.NET.Autofac</PackageId>
         <Title>Messager.NET.Autofac</Title>
         <Description>Autofac integration for Messager.NET.</Description>
     </PropertyGroup>

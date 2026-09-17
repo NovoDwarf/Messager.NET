@@ -3,7 +3,7 @@
 ## Overview
 
 > [!WARNING]
-> THE PROJECT IS IN EARLY DEVELOPMENT, SO BUGS AND UB ARE INEVITABLE, AS WELL AS BAD CODE OR OTHER ERRORS
+> This project was created for educational purposes and is still under development. It may contain bugs, incomplete features, and architectural flaws. The code is not production-ready and should be used with caution.
 
 A lightweight and fast messaging system (pub/sub) for .NET 10 with support for:
 
@@ -72,12 +72,10 @@ The goal is simple, transparent, and thread-safe event exchange between services
 
 ## Usage
 
-[See](.github/docs/en/Examples.md)
-
 ## Thanks
 
 - Ideas and inspiration from [**MessagePipe**](https://github.com/Cysharp/MessagePipe) ([**Cysharp**](https://github.com/Cysharp)). My project is essentially a rewrite because I encountered that MessagePipe wasn't working for me.
 
 ## License
 
-[**Messager.NET**]() is licensed under the [**MIT License**](), see [LICENSE](LICENSE) for more information.
+[**Messager.NET**](https://github.com/NovoDwarf/Messager.NET/) is licensed under the [**MIT License**](), see [LICENSE](/LICENSE) for more information.
