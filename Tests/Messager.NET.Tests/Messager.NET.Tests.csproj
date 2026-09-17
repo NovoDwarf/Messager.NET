@@ -12,6 +12,8 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Autofac" Version="9.3.2" />
+        <PackageReference Include="Messager.NET.Autofac" Version="1.0.0" />
+        <PackageReference Include="Messager.NET.Microsoft.DependencyInjection" Version="1.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0-rc.1.26425.128" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-rc.1.26425.128" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
@@ -26,11 +28,5 @@
     <ItemGroup>
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\Sources\Messager.NET.Core\Messager.NET.Core.csproj" />
-      <ProjectReference Include="..\..\Sources\Messager.NET.Autofac\Messager.NET.Autofac.csproj" />
-      <ProjectReference Include="..\..\Sources\Messager.NET.Microsoft.DependencyInjection\Messager.NET.Microsoft.DependencyInjection.csproj" />
-    </ItemGroup>
-
+    
 </Project>

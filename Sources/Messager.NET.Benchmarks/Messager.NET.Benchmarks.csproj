@@ -9,13 +9,8 @@
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.16.0-preview.1" />
       <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.2" />
+      <PackageReference Include="Messager.NET.Autofac" Version="1.0.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-rc.1.26425.128" />
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Messager.NET.Autofac\Messager.NET.Autofac.csproj" />
-      <ProjectReference Include="..\Messager.NET.Core\Messager.NET.Core.csproj" />
-      <ProjectReference Include="..\Messager.NET\Messager.NET.csproj" />
-    </ItemGroup>
-
+    
 </Project>

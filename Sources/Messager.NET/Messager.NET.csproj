@@ -3,12 +3,9 @@
     <PropertyGroup>
         <TargetFrameworks>$(ProjectTargetFrameworks)</TargetFrameworks>
     </PropertyGroup>
-
+    
     <ItemGroup>
-      <ProjectReference Include="..\Messager.NET.Core\Messager.NET.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
+      <PackageReference Include="Messager.NET.Core" Version="1.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-rc.1.26425.128" />
     </ItemGroup>
 
