@@ -13,7 +13,7 @@
 public sealed class DisposableList : IDisposable
 {
     private readonly List<IDisposable> _disposables = [];
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     
     private bool _disposed;
 
@@ -70,7 +70,7 @@ public sealed class DisposableList : IDisposable
             }
         }
     }
-
+    
     /// <summary>
     /// Disposes all <see cref="IDisposable"/> objects in the list and prevents
     /// further modifications. This method is thread-safe and idempotent.
@@ -81,6 +81,7 @@ public sealed class DisposableList : IDisposable
     /// the remaining disposables from being disposed. The first exception encountered
     /// will be re-thrown after all disposables have been processed.
     /// </remarks>
+    /// <exception cref="AggregateException"></exception>
     public void Dispose()
     {
         List<IDisposable> toDispose;
@@ -91,7 +92,7 @@ public sealed class DisposableList : IDisposable
                 return;
                 
             _disposed = true;
-            toDispose = new List<IDisposable>(_disposables);
+            toDispose = [.. _disposables];
             _disposables.Clear();
         }
         
