@@ -5,8 +5,8 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <PackageReference Include="Messager.NET" Version="1.0.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0-rc.1.26425.128" />
+      <ProjectReference Include="..\Messager.NET\Messager.NET.csproj" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0-rc.3.26522.148" />
     </ItemGroup>
 
 </Project>

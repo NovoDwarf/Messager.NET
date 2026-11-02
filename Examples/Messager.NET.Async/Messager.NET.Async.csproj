@@ -7,7 +7,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <PackageReference Include="Messager.NET.Microsoft.DependencyInjection" Version="1.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-rc.1.26425.128" />
+      <ProjectReference Include="..\..\Sources\Messager.NET.Microsoft.DependencyInjection\Messager.NET.Microsoft.DependencyInjection.csproj" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-rc.3.26522.148" />
     </ItemGroup>
 </Project>
