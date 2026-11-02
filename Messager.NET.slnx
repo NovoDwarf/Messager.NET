@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Examples/">
+    <Project Path="Examples/Messager.NET.Queued/Messager.NET.Queued.csproj" />
     <Project Path="Examples/Messager.NET.Async/Messager.NET.Async.csproj" />
     <Project Path="Examples/Messager.NET.AsyncKeyed/Messager.NET.AsyncKeyed.csproj" />
     <Project Path="Examples/Messager.NET.AsyncRequests/Messager.NET.AsyncRequests.csproj" />

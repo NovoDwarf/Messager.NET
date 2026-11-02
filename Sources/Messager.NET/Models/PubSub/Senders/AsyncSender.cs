@@ -12,5 +12,8 @@ public class AsyncSender<TEvent> : IAsyncSender<TEvent>
 		_impl = factory.GetAsyncSender<TEvent>();
 	}
 
-	public ValueTask SendAsync(TEvent evt) => _impl.SendAsync(evt);
+	public ValueTask SendAsync(TEvent evt)
+	{
+		return _impl.SendAsync(evt);
+	}
 }

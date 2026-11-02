@@ -5,14 +5,25 @@ namespace Messager.NET.Models.PubSub.Receivers;
 
 public class AsyncReceiver<TEvent> : IAsyncReceiver<TEvent>
 {
-	private readonly IAsyncReceiver<TEvent> _impl;
+    private readonly IAsyncReceiver<TEvent> _impl;
 
-	public AsyncReceiver(IBrokerFactory factory)
-	{
-		_impl = factory.GetAsyncReceiver<TEvent>();
-	}
+    public AsyncReceiver(IBrokerFactory factory)
+    {
+        _impl = factory.GetAsyncReceiver<TEvent>();
+    }
 
-	public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler) => _impl.Subscribe(handler);
+    public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler)
+    {
+        return _impl.Subscribe(handler);
+    }
 
-	public void Unsubscribe(Func<TEvent, ValueTask> handler) => _impl.Unsubscribe(handler);
+    public void Unsubscribe(Func<TEvent, ValueTask> handler)
+    {
+        _impl.Unsubscribe(handler);
+    }
+
+    public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler, SubscriptionReference reference)
+    {
+        return _impl.Subscribe(handler, reference);
+    }
 }

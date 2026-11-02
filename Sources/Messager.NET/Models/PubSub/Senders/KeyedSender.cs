@@ -13,5 +13,8 @@ public class KeyedSender<TKey, TEvent> : ISender<TKey, TEvent>
 		_impl = factory.GetKeyedSender<TKey, TEvent>();
 	}
 
-	public void Send(TKey key, TEvent evt) => _impl.Send(key, evt);
+	public void Send(TKey key, TEvent evt)
+	{
+		_impl.Send(key, evt);
+	}
 }

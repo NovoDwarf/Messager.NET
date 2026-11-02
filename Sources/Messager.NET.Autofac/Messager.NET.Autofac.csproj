@@ -5,8 +5,8 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <PackageReference Include="Autofac" Version="9.3.2" />
-      <PackageReference Include="Messager.NET" Version="1.0.0" />
+      <PackageReference Include="Autofac" Version="9.3.4" />
+      <ProjectReference Include="..\Messager.NET\Messager.NET.csproj" />
     </ItemGroup>
 
 </Project>

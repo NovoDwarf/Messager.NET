@@ -5,12 +5,20 @@ namespace Messager.NET.Models.PubSub.Receivers;
 
 public class Receiver<TEvent> : IReceiver<TEvent>
 {
-	private readonly IReceiver<TEvent> _impl;
+    private readonly IReceiver<TEvent> _impl;
 
-	public Receiver(IBrokerFactory factory)
-	{
-		_impl = factory.GetReceiver<TEvent>();
-	}
+    public Receiver(IBrokerFactory factory)
+    {
+        _impl = factory.GetReceiver<TEvent>();
+    }
 
-	public IDisposable Subscribe(Action<TEvent> handler) => _impl.Subscribe(handler);
+    public IDisposable Subscribe(Action<TEvent> handler)
+    {
+        return _impl.Subscribe(handler);
+    }
+
+    public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference)
+    {
+        return _impl.Subscribe(handler, reference);
+    }
 }

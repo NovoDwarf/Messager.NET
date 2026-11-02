@@ -5,8 +5,8 @@
     </PropertyGroup>
     
     <ItemGroup>
-      <PackageReference Include="Messager.NET.Core" Version="1.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-rc.1.26425.128" />
+      <ProjectReference Include="..\Messager.NET.Core\Messager.NET.Core.csproj" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0-rc.3.26522.148" />
     </ItemGroup>
 
 </Project>
