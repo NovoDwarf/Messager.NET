@@ -1,42 +1,43 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace Messager.NET.Entities;
 
-internal class WeakAction<T>
+internal sealed class WeakAction<T>
 {
-	private readonly WeakReference? _targetRef;
-	private readonly MethodInfo _method;
-	private readonly bool _isStatic;
+    private readonly WeakDelegate<Action<T>> _handler;
 
-	internal WeakAction(Action<T> action)
-	{
-		_method = action.Method;
-		_isStatic = _method.IsStatic;
+    internal WeakAction(Action<T> action)
+    {
+        _handler = new WeakDelegate<Action<T>>(action);
+    }
 
-		_targetRef = _isStatic ? null : new WeakReference(action.Target!);
-	}
+    internal bool IsAlive => _handler.IsAlive;
 
-	internal bool IsAlive => _isStatic || (_targetRef?.IsAlive ?? false);
+    internal bool TryInvoke(T arg)
+    {
+        var invoked = false;
 
-	internal bool TryInvoke(T arg)
-	{
-		if (!_isStatic && !IsAlive)
-			return false;
+        for (var i = 0; i < _handler.Count; i++)
+        {
+            var callback = _handler.GetCallback(i);
 
-		var target = _isStatic ? null : _targetRef!.Target;
-		
-		if (!_isStatic && target == null)
-			return false;
+            if (callback == null)
+                continue;
+            
+            try
+            {
+                callback(arg);
+            }
+            catch (Exception exception)
+            {
+                throw new TargetInvocationException(exception);
+            }
 
-		_method.Invoke(target, [arg]);
-		return true;
-	}
+            invoked = true;
+        }
 
-	internal bool Matches(Action<T> action)
-	{
-		if (action.Method != _method) 
-			return false;
-		
-		return _isStatic || ReferenceEquals(action.Target, _targetRef!.Target);
-	}
+        return invoked;
+    }
+
+    internal bool Matches(Action<T> action) => _handler.Matches(action);
 }
