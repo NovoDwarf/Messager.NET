@@ -6,18 +6,27 @@ namespace Messager.NET.Receivers;
 /// <typeparam name="TEvent">The event payload type.</typeparam>
 public interface IAsyncReceiver<out TEvent>
 {
-	/// <summary>
-	/// Subscribes an asynchronous handler to events of type <typeparamref name="TEvent"/>.
-	/// </summary>
-	/// <param name="handler">The callback invoked for each matching event.</param>
-	/// <returns>An async-disposable handle that removes the subscription.</returns>
-	public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler);
+    /// <summary>
+    /// Subscribes an asynchronous handler to events of type <typeparamref name="TEvent"/>.
+    /// </summary>
+    /// <param name="handler">The callback invoked for each matching event.</param>
+    /// <returns>An async-disposable handle that removes the subscription.</returns>
+    public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler);
 
-	/// <summary>
-	/// Removes a previously registered asynchronous handler.
-	/// </summary>
-	/// <param name="handler">The handler instance to remove.</param>
-	public void Unsubscribe(Func<TEvent, ValueTask> handler);
+    /// <summary>
+    /// Subscribes an asynchronous handler with explicit callback-target ownership.
+    /// </summary>
+    /// <exception cref="NotSupportedException">The receiver does not support explicit reference modes.</exception>
+    public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler, SubscriptionReference reference)
+    {
+        throw new NotSupportedException("This receiver does not support explicit subscription references.");
+    }
+
+    /// <summary>
+    /// Removes a previously registered asynchronous handler.
+    /// </summary>
+    /// <param name="handler">The handler instance to remove.</param>
+    public void Unsubscribe(Func<TEvent, ValueTask> handler);
 }
 
 /// <summary>
@@ -27,18 +36,27 @@ public interface IAsyncReceiver<out TEvent>
 /// <typeparam name="TEvent">The event payload type.</typeparam>
 public interface IAsyncReceiver<in TKey, out TEvent> where TKey : notnull
 {
-	/// <summary>
-	/// Subscribes an asynchronous handler to events matching the specified <paramref name="key"/>.
-	/// </summary>
-	/// <param name="key">The routing key used to bind the subscription.</param>
-	/// <param name="handler">The callback invoked for each matching event.</param>
-	/// <returns>An async-disposable handle that removes the subscription.</returns>
-	public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler);
+    /// <summary>
+    /// Subscribes an asynchronous handler to events matching the specified <paramref name="key"/>.
+    /// </summary>
+    /// <param name="key">The routing key used to bind the subscription.</param>
+    /// <param name="handler">The callback invoked for each matching event.</param>
+    /// <returns>An async-disposable handle that removes the subscription.</returns>
+    public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler);
 
-	/// <summary>
-	/// Removes a previously registered asynchronous handler for the specified key.
-	/// </summary>
-	/// <param name="key">The routing key used when the handler was registered.</param>
-	/// <param name="handler">The handler instance to remove.</param>
-	public void Unsubscribe(TKey key, Func<TEvent, ValueTask> handler);
+    /// <summary>
+    /// Subscribes a keyed asynchronous handler with explicit callback-target ownership.
+    /// </summary>
+    /// <exception cref="NotSupportedException">The receiver does not support explicit reference modes.</exception>
+    public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler, SubscriptionReference reference)
+    {
+        throw new NotSupportedException("This receiver does not support explicit subscription references.");
+    }
+
+    /// <summary>
+    /// Removes a previously registered asynchronous handler for the specified key.
+    /// </summary>
+    /// <param name="key">The routing key used when the handler was registered.</param>
+    /// <param name="handler">The handler instance to remove.</param>
+    public void Unsubscribe(TKey key, Func<TEvent, ValueTask> handler);
 }
