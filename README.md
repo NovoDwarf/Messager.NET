@@ -11,6 +11,7 @@ A lightweight and fast messaging system (pub/sub) for .NET 10 with support for:
 - Synchronous and asynchronous senders/receivers;
 - Lazy broker creation for each event type;
 - Optional DI integration via separate packages;
+- Bounded in-memory queues with sequential background processing;
 - Single point of contact — **Exchange**.
 
 The goal is simple, transparent, and thread-safe event exchange between services/modules without unnecessary coupling.
@@ -21,7 +22,7 @@ The goal is simple, transparent, and thread-safe event exchange between services
 - Add self-made code analyzers for preventing common mistakes.
 - Expand integrations for additional DI providers beyond [**Microsoft.Extensions.DependencyInjection**](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/).
 - Support for middleware and event pipelines (logging, filtering, retrievals).
-- Other message handling options (e.g., **Channel**, **IObservable**).
+- Additional queue processing policies and **IObservable** support.
 - Enhanced diagnostics and metrics for brokers and subscribers.
 - Enhanced subscriber error handling policies.
 
