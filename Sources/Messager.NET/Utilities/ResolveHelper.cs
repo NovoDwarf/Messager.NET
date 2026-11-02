@@ -14,7 +14,13 @@ public static class ResolveHelper
 		typeof(IAsyncRequest<,,>)
 	];
 
-	public static bool IsRequestType(Type type) => type.GetInterfaces().Any(IsRequestInterface);
+	public static bool IsRequestType(Type type)
+	{
+		return type.GetInterfaces().Any(IsRequestInterface);
+	}
 
-	public static bool IsRequestInterface(Type type) => type.IsGenericType && RequestTypes.Contains(type.GetGenericTypeDefinition());
+	public static bool IsRequestInterface(Type type)
+	{
+		return type.IsGenericType && RequestTypes.Contains(type.GetGenericTypeDefinition());
+	}
 }
