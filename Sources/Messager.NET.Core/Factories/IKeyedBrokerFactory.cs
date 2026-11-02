@@ -14,7 +14,7 @@ public interface IKeyedBrokerFactory
 	/// <typeparam name="TKey">The routing key type.</typeparam>
 	/// <typeparam name="TEvent">The event payload type.</typeparam>
 	/// <returns>A sender bound to the specified key and event types.</returns>
-	ISender<TKey, TEvent> GetKeyedSender<TKey, TEvent>() where TKey : notnull;
+	public ISender<TKey, TEvent> GetKeyedSender<TKey, TEvent>() where TKey : notnull;
 
 	/// <summary>
 	/// Gets a receiver for the specified key and event types.
@@ -22,7 +22,7 @@ public interface IKeyedBrokerFactory
 	/// <typeparam name="TKey">The routing key type.</typeparam>
 	/// <typeparam name="TEvent">The event payload type.</typeparam>
 	/// <returns>A receiver bound to the specified key and event types.</returns>
-	IReceiver<TKey, TEvent> GetKeyedReceiver<TKey, TEvent>() where TKey : notnull;
+	public IReceiver<TKey, TEvent> GetKeyedReceiver<TKey, TEvent>() where TKey : notnull;
 
 	/// <summary>
 	/// Gets an asynchronous sender for the specified key and event types.
@@ -30,7 +30,7 @@ public interface IKeyedBrokerFactory
 	/// <typeparam name="TKey">The routing key type.</typeparam>
 	/// <typeparam name="TEvent">The event payload type.</typeparam>
 	/// <returns>An asynchronous sender bound to the specified key and event types.</returns>
-	IAsyncSender<TKey, TEvent> GetAsyncKeyedSender<TKey, TEvent>() where TKey : notnull;
+	public IAsyncSender<TKey, TEvent> GetAsyncKeyedSender<TKey, TEvent>() where TKey : notnull;
 
 	/// <summary>
 	/// Gets an asynchronous receiver for the specified key and event types.
@@ -38,5 +38,5 @@ public interface IKeyedBrokerFactory
 	/// <typeparam name="TKey">The routing key type.</typeparam>
 	/// <typeparam name="TEvent">The event payload type.</typeparam>
 	/// <returns>An asynchronous receiver bound to the specified key and event types.</returns>
-	IAsyncReceiver<TKey, TEvent> GetAsyncKeyedReceiver<TKey, TEvent>() where TKey : notnull;
+	public IAsyncReceiver<TKey, TEvent> GetAsyncKeyedReceiver<TKey, TEvent>() where TKey : notnull;
 }
