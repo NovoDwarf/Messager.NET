@@ -44,4 +44,19 @@ internal static partial class LoggerExtensions
     internal static partial void LogErrorInvokingHandlerForKey(this ILogger logger, Exception ex, string brokerType, string keyType, string eventType, Guid id);
     
     #endregion
+
+    [LoggerMessage(LogLevel.Debug, "Subscriber added for key {Key} in AsyncKeyedBroker<{KeyType}, {EventType}>. Total subscribers for key: {Count}")]
+    public static partial void LogSubscriberAddedForKeyKeyInAsynckeyedbrokerKeytypeEventtypeTotalSubscribersFor(this ILogger logger, object key, string keyType, string eventType, int count);
+    
+    [LoggerMessage(
+        EventId = 1001,
+        Level = LogLevel.Error,
+        Message = "Message queue for {MessageType} stopped because its handler failed")]
+    internal static partial void LogQueueHandlerFailed(this ILogger logger, Exception exception, string messageType);
+
+    [LoggerMessage(
+        EventId = 1002,
+        Level = LogLevel.Warning,
+        Message = "Message queue for {MessageType} stopped because its handler was canceled")]
+    internal static partial void LogQueueHandlerCanceled(this ILogger logger, Exception exception, string messageType);
 }

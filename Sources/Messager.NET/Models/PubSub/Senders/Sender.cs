@@ -12,5 +12,8 @@ public class Sender<TEvent> : ISender<TEvent>
 		_impl = factory.GetSender<TEvent>();
 	}
 
-	public void Send(TEvent evt) => _impl.Send(evt);
+	public void Send(TEvent evt)
+	{
+		_impl.Send(evt);
+	}
 }

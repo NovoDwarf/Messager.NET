@@ -13,5 +13,8 @@ public class AsyncKeyedSender<TKey, TEvent> : IAsyncSender<TKey, TEvent>
 		_impl = factory.GetAsyncKeyedSender<TKey, TEvent>();
 	}
 
-	public ValueTask SendAsync(TKey key, TEvent evt) => _impl.SendAsync(key, evt);
+	public ValueTask SendAsync(TKey key, TEvent evt)
+	{
+		return _impl.SendAsync(key, evt);
+	}
 }
