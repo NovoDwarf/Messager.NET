@@ -3,7 +3,7 @@ using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Messager.NET.Tests.Models.Entity.PubSub;
+namespace Messager.NET.Tests.Microsoft.DependencyInjection;
 
 [TestFixture]
 public class AsyncPubSubRegistrationsTests
@@ -39,3 +39,4 @@ public class AsyncPubSubRegistrationsTests
 		Assert.That(options.EnableLogging, Is.False);
 	}
 }
+

@@ -14,6 +14,7 @@ public class AutofacRegistrationsTests
 	public void AddMessager_ShouldRegisterPubSubAbstractions()
 	{
 		var builder = new ContainerBuilder();
+		
 		builder.AddMessager();
 
 		using var container = builder.Build();
@@ -36,10 +37,12 @@ public class AutofacRegistrationsTests
 	public void AddMessager_ShouldRegisterConfiguredOptions()
 	{
 		var builder = new ContainerBuilder();
+		
 		builder.AddMessager(options => options.EnableLogging = false);
 
 		using var container = builder.Build();
 		using var scope = container.BeginLifetimeScope();
+		
 		var options = scope.Resolve<MessagerOptions>();
 
 		Assert.That(options.EnableLogging, Is.False);
@@ -49,6 +52,7 @@ public class AutofacRegistrationsTests
 	public void AddMessager_ShouldRegisterRequestsFromConfiguredAssemblies()
 	{
 		var builder = new ContainerBuilder();
+		
 		builder.AddMessager(options => options.RequestAssemblies.Add(typeof(TestAutofacRequest).Assembly));
 
 		using var container = builder.Build();

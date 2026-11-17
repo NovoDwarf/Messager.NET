@@ -10,53 +10,53 @@ using System.Threading.Tasks;
 [TestFixture]
 public partial class UnsubscriberAsyncTests
 {
-	[Test]
-	public void Constructor_WithValidFunc_ShouldInitialize()
-	{
-		var func = new Func<ValueTask>(() => ValueTask.CompletedTask);
-		
-		var unsubscriber = new UnsubscriberAsync(func);
+    [Test]
+    public void Constructor_WithValidFunc_ShouldInitialize()
+    {
+        var func = new Func<ValueTask>(() => ValueTask.CompletedTask);
 
-		Assert.That(unsubscriber.IsDisposed, Is.False);
-	}
+        var unsubscriber = new UnsubscriberAsync(func);
 
-	[Test]
-	public void Constructor_WithNullFunc_ShouldThrowArgumentNullException()
-	{
-		Assert.Throws<ArgumentNullException>(() =>
-		{
-			var unsubscriberAsync = new UnsubscriberAsync(null!);
-		});
-	}
+        Assert.That(unsubscriber.IsDisposed, Is.False);
+    }
 
-	[Test]
-	public void IsDisposed_ShouldReflectCorrectState()
-	{
-		var unsubscriber = new UnsubscriberAsync(() => ValueTask.CompletedTask);
+    [Test]
+    public void Constructor_WithNullFunc_ShouldThrowArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            var unsubscriberAsync = new UnsubscriberAsync(null!);
+        });
+    }
 
-		Assert.That(unsubscriber.IsDisposed, Is.False);
+    [Test]
+    public void IsDisposed_ShouldReflectCorrectState()
+    {
+        var unsubscriber = new UnsubscriberAsync(() => ValueTask.CompletedTask);
 
-		unsubscriber.DisposeAsync().GetAwaiter().GetResult();
-		Assert.That(unsubscriber.IsDisposed, Is.True);
-	}
+        Assert.That(unsubscriber.IsDisposed, Is.False);
 
-	[Test]
-	public async Task ThreadSafety_MultipleThreadsCallingDisposeAsync_ShouldExecuteFuncOnlyOnce()
-	{ 
-		var callCount = 0;
-		var unsubscriber = new UnsubscriberAsync(() =>
-		{
-			Interlocked.Increment(ref callCount);
-			return ValueTask.CompletedTask;
-		});
+        unsubscriber.DisposeAsync().GetAwaiter().GetResult();
+        Assert.That(unsubscriber.IsDisposed, Is.True);
+    }
 
-		const int taskCount = 10;
-		var tasks = new Task[taskCount];
+    [Test]
+    public async Task ThreadSafety_MultipleThreadsCallingDisposeAsync_ShouldExecuteFuncOnlyOnce()
+    {
+        var callCount = 0;
+        var unsubscriber = new UnsubscriberAsync(() =>
+        {
+            Interlocked.Increment(ref callCount);
+            return ValueTask.CompletedTask;
+        });
 
-		for (var i = 0; i < taskCount; i++) 
-			tasks[i] = Task.Run(async () => await unsubscriber.DisposeAsync());
+        const int taskCount = 10;
+        var tasks = new Task[taskCount];
 
-		await Task.WhenAll(tasks);
+        for (var i = 0; i < taskCount; i++)
+            tasks[i] = Task.Run(async () => await unsubscriber.DisposeAsync());
+
+        await Task.WhenAll(tasks);
 
         using (Assert.EnterMultipleScope())
         {
@@ -65,23 +65,23 @@ public partial class UnsubscriberAsyncTests
         }
     }
 
-	[Test]
-	public async Task ThreadSafety_ConcurrentDisposeAsyncCalls_ShouldBeThreadSafe()
-	{
-		var callCount = 0;
-		var unsubscriber = new UnsubscriberAsync(() =>
-		{
-			Interlocked.Increment(ref callCount);
-			return ValueTask.CompletedTask;
-		});
+    [Test]
+    public async Task ThreadSafety_ConcurrentDisposeAsyncCalls_ShouldBeThreadSafe()
+    {
+        var callCount = 0;
+        var unsubscriber = new UnsubscriberAsync(() =>
+        {
+            Interlocked.Increment(ref callCount);
+            return ValueTask.CompletedTask;
+        });
 
-		const int taskCount = 100;
-		var tasks = new Task[taskCount];
+        const int taskCount = 100;
+        var tasks = new Task[taskCount];
 
-		for (var i = 0; i < taskCount; i++) 
-			tasks[i] = Task.Run(async () => await unsubscriber.DisposeAsync());
+        for (var i = 0; i < taskCount; i++)
+            tasks[i] = Task.Run(async () => await unsubscriber.DisposeAsync());
 
-		await Task.WhenAll(tasks);
+        await Task.WhenAll(tasks);
 
         using (Assert.EnterMultipleScope())
         {
@@ -90,25 +90,25 @@ public partial class UnsubscriberAsyncTests
         }
     }
 
-	[Test]
-	public async Task MultipleInstances_ShouldWorkIndependently()
-	{
-		var callCount1 = 0;
-		var callCount2 = 0;
-		
-		var unsubscriber1 = new UnsubscriberAsync(() =>
-		{
-			callCount1++;
-			return ValueTask.CompletedTask;
-		});
-		
-		var unsubscriber2 = new UnsubscriberAsync(() =>
-		{
-			callCount2++;
-			return ValueTask.CompletedTask;
-		});
+    [Test]
+    public async Task MultipleInstances_ShouldWorkIndependently()
+    {
+        var callCount1 = 0;
+        var callCount2 = 0;
 
-		await unsubscriber1.DisposeAsync();
+        var unsubscriber1 = new UnsubscriberAsync(() =>
+        {
+            callCount1++;
+            return ValueTask.CompletedTask;
+        });
+
+        var unsubscriber2 = new UnsubscriberAsync(() =>
+        {
+            callCount2++;
+            return ValueTask.CompletedTask;
+        });
+
+        await unsubscriber1.DisposeAsync();
 
         using (Assert.EnterMultipleScope())
         {
@@ -119,35 +119,35 @@ public partial class UnsubscriberAsyncTests
         }
     }
 
-	[Test]
-	public async Task InterlockedCompareExchange_ShouldEnsureAtomicOperation()
-	{
-		var callCount = 0;
-		var unsubscriber = new UnsubscriberAsync(() =>
-		{
-			callCount++;
-			return ValueTask.CompletedTask;
-		});
+    [Test]
+    public async Task InterlockedCompareExchange_ShouldEnsureAtomicOperation()
+    {
+        var callCount = 0;
+        var unsubscriber = new UnsubscriberAsync(() =>
+        {
+            callCount++;
+            return ValueTask.CompletedTask;
+        });
 
-		var task1 = Task.Run(async () =>
-		{
-			for (var i = 0; i < 100; i++)
-			{
-				await unsubscriber.DisposeAsync();
-				await Task.Yield();
-			}
-		});
+        var task1 = Task.Run(async () =>
+        {
+            for (var i = 0; i < 100; i++)
+            {
+                await unsubscriber.DisposeAsync();
+                await Task.Yield();
+            }
+        });
 
-		var task2 = Task.Run(async () =>
-		{
-			for (var i = 0; i < 100; i++)
-			{
-				await unsubscriber.DisposeAsync();
-				await Task.Yield();
-			}
-		});
+        var task2 = Task.Run(async () =>
+        {
+            for (var i = 0; i < 100; i++)
+            {
+                await unsubscriber.DisposeAsync();
+                await Task.Yield();
+            }
+        });
 
-		await Task.WhenAll(task1, task2);
+        await Task.WhenAll(task1, task2);
 
         using (Assert.EnterMultipleScope())
         {
@@ -156,28 +156,28 @@ public partial class UnsubscriberAsyncTests
         }
     }
 
-	[Test]
-	public async Task StressTest_HighConcurrency_ShouldRemainThreadSafe()
-	{
-		const int iterations = 100;
+    [Test]
+    public async Task StressTest_HighConcurrency_ShouldRemainThreadSafe()
+    {
+        const int iterations = 100;
 
-		for (var i = 0; i < iterations; i++)
-		{
-			var callCount = 0;
-			var unsubscriber = new UnsubscriberAsync(() =>
-			{
-				Interlocked.Increment(ref callCount);
-				return ValueTask.CompletedTask;
-			});
+        for (var i = 0; i < iterations; i++)
+        {
+            var callCount = 0;
+            var unsubscriber = new UnsubscriberAsync(() =>
+            {
+                Interlocked.Increment(ref callCount);
+                return ValueTask.CompletedTask;
+            });
 
-			var tasks = new Task[Environment.ProcessorCount * 2];
+            var tasks = new Task[Environment.ProcessorCount * 2];
 
-			for (var j = 0; j < tasks.Length; j++)
-			{
-				tasks[j] = Task.Run(async () => await unsubscriber.DisposeAsync());
-			}
+            for (var j = 0; j < tasks.Length; j++)
+            {
+                tasks[j] = Task.Run(async () => await unsubscriber.DisposeAsync());
+            }
 
-			await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks);
 
             using (Assert.EnterMultipleScope())
             {
@@ -185,40 +185,52 @@ public partial class UnsubscriberAsyncTests
                 Assert.That(unsubscriber.IsDisposed, Is.True, $"Iteration {i} failed");
             }
         }
-	}
+    }
 
-	[Test]
-	public async Task ConfigureAwaitFalse_ShouldNotCaptureContext()
-	{
-		var synchronizationContext = new TestSynchronizationContext();
-		SynchronizationContext.SetSynchronizationContext(synchronizationContext);
+    [Test]
+    public async Task ConfigureAwaitFalse_ShouldNotCaptureContext()
+    {
+        var synchronizationContext = new TestSynchronizationContext();
+        var originalContext = SynchronizationContext.Current;
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackContext = default(SynchronizationContext);
+        var unsubscriber = new UnsubscriberAsync(() =>
+    {
+        callbackContext = SynchronizationContext.Current;
+        return new ValueTask(completion.Task);
+    });
+        ValueTask disposal;
+        try
+        {
+            SynchronizationContext.SetSynchronizationContext(synchronizationContext);
+            disposal = unsubscriber.DisposeAsync();
+        }
+        finally
+        {
+            SynchronizationContext.SetSynchronizationContext(originalContext);
+        }
 
-		var contextCaptured = false;
-		var unsubscriber = new UnsubscriberAsync(async () =>
-		{
-			contextCaptured = SynchronizationContext.Current == synchronizationContext;
-			await Task.Delay(10);
-		});
+        completion.SetResult();
+        await disposal;
 
-		try
-		{
-			await unsubscriber.DisposeAsync();
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(callbackContext, Is.SameAs(synchronizationContext));
+            Assert.That(synchronizationContext.PostCount, Is.Zero);
+        }
+    }
 
-			Assert.That(contextCaptured, Is.False);
-		}
-		finally
-		{
-			SynchronizationContext.SetSynchronizationContext(null);
-		}
-	}
-	
-	private class TestSynchronizationContext : SynchronizationContext
-	{
-		public override void Post(SendOrPostCallback d, object? state)
-		{
-			// Simulate context behavior
-			d(state);
-		}
-	}
+    private sealed class TestSynchronizationContext : SynchronizationContext
+    {
+        private int _postCount;
+
+        public int PostCount => Volatile.Read(ref _postCount);
+
+        public override void Post(SendOrPostCallback d, object? state)
+        {
+            Interlocked.Increment(ref _postCount);
+            d(state);
+        }
+    }
 }
 

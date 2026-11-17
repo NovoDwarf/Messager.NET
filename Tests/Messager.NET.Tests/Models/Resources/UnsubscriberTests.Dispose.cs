@@ -41,7 +41,7 @@ public partial class UnsubscriberTests
 	{
 		var unsubscriber = new Unsubscriber(() => throw new InvalidOperationException("Test exception"));
 
-		Assert.Throws<InvalidOperationException>(() => unsubscriber.Dispose());
+		Assert.Throws<InvalidOperationException>(unsubscriber.Dispose);
 		Assert.That(unsubscriber.IsDisposed, Is.True);
 	}
 
@@ -54,9 +54,7 @@ public partial class UnsubscriberTests
 		{
 			unsubscriber.Dispose();
 		}
-		catch (InvalidOperationException)
-		{
-		}
+		catch (InvalidOperationException) { }
 
 		Assert.That(unsubscriber.IsDisposed, Is.True);
 	}
@@ -71,7 +69,7 @@ public partial class UnsubscriberTests
 			actionExecuted = true;
 		});
 
-		var disposeTask = Task.Run(() => unsubscriber.Dispose());
+		var disposeTask = Task.Run(unsubscriber.Dispose);
 
 		Thread.Sleep(10);
 
@@ -119,10 +117,10 @@ public partial class UnsubscriberTests
 				throw new InvalidOperationException("First call fails");
 		});
 
-		Assert.Throws<InvalidOperationException>(() => unsubscriber.Dispose());
+		Assert.Throws<InvalidOperationException>(unsubscriber.Dispose);
 
-		Assert.DoesNotThrow(() => unsubscriber.Dispose());
-		Assert.DoesNotThrow(() => unsubscriber.Dispose());
+		Assert.DoesNotThrow(unsubscriber.Dispose);
+		Assert.DoesNotThrow(unsubscriber.Dispose);
 
         using (Assert.EnterMultipleScope())
         {

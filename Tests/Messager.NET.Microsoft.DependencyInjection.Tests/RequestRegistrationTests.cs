@@ -2,7 +2,7 @@ using Messager.NET.Microsoft.DependencyInjection.Extensions;
 using Messager.NET.Requests;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Messager.NET.Tests.Models.Requests;
+namespace Messager.NET.Tests.Microsoft.DependencyInjection;
 
 [TestFixture]
 public class RequestRegistrationTests
@@ -38,3 +38,4 @@ internal sealed class TestRequest : IRequest<string>
 {
 	public string Invoke() => "pong";
 }
+
