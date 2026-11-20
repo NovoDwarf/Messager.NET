@@ -11,14 +11,9 @@ internal sealed class SubscriptionSync<TEvent>
     {
         switch (reference)
         {
-            case SubscriptionReference.Strong:
-                _strongHandler = handler;
-                break;
-            case SubscriptionReference.Weak:
-                _weakHandler = new WeakAction<TEvent>(handler);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(reference), reference, "Unknown reference mode.");
+            case SubscriptionReference.Strong: _strongHandler = handler; break;
+            case SubscriptionReference.Weak: _weakHandler = new WeakAction<TEvent>(handler); break;
+            default: throw new ArgumentOutOfRangeException(nameof(reference), reference, "Unknown reference mode.");
         }
     }
 

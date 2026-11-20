@@ -18,11 +18,8 @@ internal sealed class SubscriptionAsync<TEvent>
                 _strongHandler = handler;
                 _callbacks = handler.GetInvocationList();
                 break;
-            case SubscriptionReference.Weak:
-                _weakHandler = new WeakDelegate<Func<TEvent, ValueTask>>(handler);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(reference), reference, "Unknown reference mode.");
+            case SubscriptionReference.Weak: _weakHandler = new WeakDelegate<Func<TEvent, ValueTask>>(handler); break;
+            default: throw new ArgumentOutOfRangeException(nameof(reference), reference, "Unknown reference mode.");
         }
     }
 
