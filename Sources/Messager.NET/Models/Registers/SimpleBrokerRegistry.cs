@@ -9,24 +9,22 @@ internal class SimpleBrokerRegistry
 	private readonly Dictionary<Type, object> _brokers = new();
 	private readonly Lock _locker = new();
 	
-	private readonly ILoggerFactory? _loggerFactory;
-	private readonly ILogger<SimpleBrokerRegistry>? _logger;
+	private readonly ILoggerFactory _loggerFactory;
 
-	internal SimpleBrokerRegistry(ILoggerFactory? loggerFactory = null)
+	internal SimpleBrokerRegistry(ILoggerFactory loggerFactory)
 	{
 		_loggerFactory = loggerFactory;
-		_logger = loggerFactory?.CreateLogger<SimpleBrokerRegistry>();
 	}
 
 	internal SimpleBroker<TEvent> GetOrCreate<TEvent>()
 	{
 		lock (_locker)
-		{
-			return RegistryHelper.GetOrCreate(_brokers, typeof(TEvent), () =>
-			{
-				var logger = _loggerFactory?.CreateLogger<SimpleBroker<TEvent>>();
-				return new SimpleBroker<TEvent>(logger);
-			});
-		}
+			return RegistryHelper.GetOrCreate(_brokers, typeof(TEvent), New<TEvent>);
+	}
+
+	private SimpleBroker<TEvent> New<TEvent>()
+	{
+		var logger = _loggerFactory.CreateLogger<SimpleBroker<TEvent>>();
+		return new SimpleBroker<TEvent>(logger);
 	}
 }
