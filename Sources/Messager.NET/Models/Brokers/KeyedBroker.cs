@@ -5,23 +5,24 @@ using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
-public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IReceiver<TKey, TEvent>
+public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IReceiver<TKey, TEvent> 
     where TKey : notnull
 {
     private readonly Dictionary<TKey, List<SubscriptionSync<TEvent>>> _handlers = new();
     private readonly Lock _locker = new();
-    private readonly ILogger<KeyedBroker<TKey, TEvent>>? _logger;
+    
+    private readonly ILogger<KeyedBroker<TKey, TEvent>> _logger;
 
     public KeyedBroker(ILogger<KeyedBroker<TKey, TEvent>>? logger = null)
     {
-        _logger = logger;
+        _logger = logger ?? NullLogger<KeyedBroker<TKey, TEvent>>.Instance;
     }
 
     public Guid Id { get; set; } = Guid.NewGuid();
-
     public string BrokerType => typeof(SimpleBroker<>).Name;
     public string KeyType => typeof(TKey).Name;
     public string EventType => typeof(TEvent).Name;
@@ -34,7 +35,9 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
         {
             if (!_handlers.TryGetValue(key, out var list))
             {
-                _logger?.LogKeyNotFound(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
+                if (_logger.IsEnabled(LogLevel.Warning)) 
+                    _logger.LogKeyNotFound(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
+                
                 return;
             }
 
@@ -45,23 +48,14 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
             if (list.Count == 0)
             {
                 _handlers.Remove(key);
-                _logger?.LogRemovedEmptyKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
+               
+                if (_logger.IsEnabled(LogLevel.Debug)) 
+                    _logger.LogRemovedEmptyKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
             }
         }
 
         foreach (var sub in activeHandlers)
             TryInvoke(sub, evt);
-    }
-
-    public IDisposable Subscribe(TKey key, Action<TEvent> handler)
-    {
-        var subscription = Subscribe(key, handler, SubscriptionReference.Weak);
-
-        return new Unsubscriber(() =>
-        {
-            subscription.Dispose();
-            GC.KeepAlive(handler); // Preserve the legacy handle's ownership of its callback targets.
-        });
     }
 
     public IDisposable Subscribe(TKey key, Action<TEvent> handler, SubscriptionReference reference)
@@ -74,11 +68,15 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
             {
                 list = [];
                 _handlers[key] = list;
-                _logger?.LogCreateSubscriptionListForKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
+               
+                if (_logger.IsEnabled(LogLevel.Debug)) 
+                    _logger.LogCreateSubscriptionListForKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
             }
             
             list.Add(subscription);
-            _logger?.LogSubscriberAddedForKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
+         
+            if (_logger.IsEnabled(LogLevel.Debug)) 
+                _logger.LogSubscriberAddedForKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
         }
 
         return new Unsubscriber(() =>
@@ -89,13 +87,15 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
                     return;
 
                 list.Remove(subscription);
-                _logger?.LogSubscriberRemovedForKey(BrokerType, KeyType, EventType, Id, string.Empty);
+                _logger.LogSubscriberRemovedForKey(BrokerType, KeyType, EventType, Id, string.Empty);
 
                 if (list.Count != 0)
                     return;
 
                 _handlers.Remove(key);
-                _logger?.LogRemovedEmptyKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
+                
+                if (_logger.IsEnabled(LogLevel.Debug)) 
+                    _logger.LogRemovedEmptyKey(BrokerType, KeyType, EventType, Id, key.ToString() ?? "Unknown");
             }
 
         });
@@ -110,7 +110,7 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
 
         lock (_locker)
         {
-            _logger?.LogSubscribersRemovedForKey(BrokerType, KeyType, EventType, Id, string.Empty, removedCount);
+            _logger.LogSubscribersRemovedForKey(BrokerType, KeyType, EventType, Id, string.Empty, removedCount);
         }
     }
 
@@ -124,7 +124,7 @@ public partial class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEv
         {
             lock (_locker)
             {
-                _logger?.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
+                _logger.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
             }
         }
     }

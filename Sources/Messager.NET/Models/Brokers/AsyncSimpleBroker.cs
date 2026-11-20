@@ -5,6 +5,7 @@ using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
@@ -12,15 +13,15 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
 {
     private readonly List<SubscriptionAsync<TEvent>> _handlers = [];
     private readonly Lock _locker = new();
-    private readonly ILogger<AsyncSimpleBroker<TEvent>>? _logger;
+    
+    private readonly ILogger<AsyncSimpleBroker<TEvent>> _logger;
 
     public AsyncSimpleBroker(ILogger<AsyncSimpleBroker<TEvent>>? logger = null)
     {
-        _logger = logger;
+        _logger = logger ?? NullLogger<AsyncSimpleBroker<TEvent>>.Instance;
     }
 
     public Guid Id { get; set; } = Guid.NewGuid();
-
     public string BrokerType => typeof(SimpleBroker<>).Name;
     public string EventType => typeof(TEvent).Name;
 
@@ -47,7 +48,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
         lock (_locker)
         {
             _handlers.Add(subscription);
-            _logger?.LogSubscriberAdded(BrokerType, EventType, Id);
+            _logger.LogSubscriberAdded(BrokerType, EventType, Id);
         }
 
         var subscriptionReference = new WeakReference<SubscriptionAsync<TEvent>>(subscription);
@@ -60,7 +61,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
             lock (_locker)
             {
                 _handlers.Remove(registeredSubscription);
-                _logger?.LogSubscriberRemoved(BrokerType, EventType, Id);
+                _logger.LogSubscriberRemoved(BrokerType, EventType, Id);
 
                 return ValueTask.CompletedTask;
             }
@@ -77,7 +78,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
                 return;
             
             _handlers.RemoveAt(index);
-            _logger?.LogSubscriberRemoved(BrokerType, EventType, Id);
+            _logger.LogSubscriberRemoved(BrokerType, EventType, Id);
         }
     }
 
@@ -89,7 +90,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
         }
         catch (Exception ex)
         {
-            _logger?.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
+            _logger.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
         }
     }
 }

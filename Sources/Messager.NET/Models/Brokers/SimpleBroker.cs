@@ -5,6 +5,7 @@ using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
@@ -12,15 +13,15 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
 {
     private readonly List<SubscriptionSync<TEvent>> _handlers = [];
     private readonly Lock _locker = new();
-    private readonly ILogger<SimpleBroker<TEvent>>? _logger;
+    
+    private readonly ILogger<SimpleBroker<TEvent>> _logger;
 
     public SimpleBroker(ILogger<SimpleBroker<TEvent>>? logger = null)
     {
-        _logger = logger;
+        _logger = logger ?? NullLogger<SimpleBroker<TEvent>>.Instance;
     }
 
     public Guid Id { get; set; } = Guid.NewGuid();
-
     public string BrokerType => typeof(SimpleBroker<>).Name;
     public string EventType => typeof(TEvent).Name;
 
@@ -37,26 +38,15 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
         foreach (var sub in activeHandlers)
             TryInvoke(sub, evt);
     }
-
-    public IDisposable Subscribe(Action<TEvent> handler)
-    {
-        var subscription = Subscribe(handler, SubscriptionReference.Weak);
-
-        return new Unsubscriber(() =>
-        {
-            subscription.Dispose();
-            GC.KeepAlive(handler); // Preserve the legacy handle's ownership of its callback targets.
-        });
-    }
-
-    public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference)
+    
+    public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference = SubscriptionReference.Strong)
     {
         var subscription = new SubscriptionSync<TEvent>(handler, reference);
 
         lock (_locker)
         {
             _handlers.Add(subscription);
-            _logger?.LogSubscriberAdded(BrokerType, EventType, Id);
+            _logger.LogSubscriberAdded(BrokerType, EventType, Id);
         }
 
         return new Unsubscriber(() =>
@@ -64,9 +54,8 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
             lock (_locker)
             {
                 _handlers.Remove(subscription);
-                _logger?.LogSubscriberRemoved(BrokerType, EventType, Id);
+                _logger.LogSubscriberRemoved(BrokerType, EventType, Id);
             }
-
         });
     }
 
@@ -77,7 +66,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
         if (removedCount <= 0)
             return;
 
-        _logger?.LogSubscribersRemoved(BrokerType, EventType, Id, removedCount);
+        _logger.LogSubscribersRemoved(BrokerType, EventType, Id, removedCount);
     }
 
     private void TryInvoke(SubscriptionSync<TEvent> sub, TEvent evt)
@@ -88,7 +77,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
         }
         catch (Exception ex)
         {
-            _logger?.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
+            _logger.LogErrorInvokingHandler(ex, BrokerType, EventType, Id);
         }
     }
 }

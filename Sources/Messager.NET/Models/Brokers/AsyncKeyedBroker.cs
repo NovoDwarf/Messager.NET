@@ -5,6 +5,7 @@ using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
@@ -13,20 +14,23 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 {
     private readonly Dictionary<TKey, List<SubscriptionAsync<TEvent>>> _handlers = new();
     private readonly Lock _locker = new();
-    private readonly ILogger<AsyncKeyedBroker<TKey, TEvent>>? _logger;
+    
+    private readonly ILogger<AsyncKeyedBroker<TKey, TEvent>> _logger;
 
     public AsyncKeyedBroker(ILogger<AsyncKeyedBroker<TKey, TEvent>>? logger = null)
     {
-        _logger = logger;
+        _logger = logger ?? NullLogger<AsyncKeyedBroker<TKey, TEvent>>.Instance;
     }
 
     public Guid Id { get; set; } = Guid.NewGuid();
-
     public string BrokerType => typeof(AsyncKeyedBroker<TKey, TEvent>).Name;
     public string KeyType => typeof(TKey).Name;
     public string EventType => typeof(TEvent).Name;
 
-    public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler) => Subscribe(key, handler, SubscriptionReference.Strong);
+    public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler)
+    {
+        return Subscribe(key, handler, SubscriptionReference.Strong);
+    }
 
     public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler, SubscriptionReference reference)
     {
@@ -40,9 +44,10 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
                 _handlers[key] = list;
 
             }
+            
             list.Add(subscription);
             
-            _logger?.LogSubscriberAddedForKeyKeyInAsynckeyedbrokerKeytypeEventtypeTotalSubscribersFor(key, typeof(TKey).Name, typeof(TEvent).Name, list.Count);
+            _logger.LogSubscriberAddedForKeyKeyInAsynckeyedbrokerKeytypeEventtypeTotalSubscribersFor(key, typeof(TKey).Name, typeof(TEvent).Name, list.Count);
         }
 
         var subscriptionReference = new WeakReference<SubscriptionAsync<TEvent>>(subscription);
@@ -115,7 +120,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Error invoking async handler for event {EventType} with key {Key}", typeof(TEvent).Name, key);
+            _logger.LogError(ex, "Error invoking async handler for event {EventType} with key {Key}", typeof(TEvent).Name, key);
         }
     }
 }
