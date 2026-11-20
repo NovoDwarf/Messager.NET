@@ -4,8 +4,6 @@ namespace Messager.NET.Extensions;
 
 internal static partial class LoggerExtensions
 {
-    #region Simple
-
     [LoggerMessage(LogLevel.Debug, "[{BrokerType}<{EventType}> [{Id}]] Subscriber added")]
     internal static partial void LogSubscriberAdded(this ILogger logger, string brokerType, string eventType, Guid id);
     
@@ -17,11 +15,7 @@ internal static partial class LoggerExtensions
 
     [LoggerMessage(LogLevel.Error, "[{BrokerType}<{EventType}> [{Id}]] Error invoking handler for event")]
     internal static partial void LogErrorInvokingHandler(this ILogger logger, Exception ex, string brokerType, string eventType, Guid id);
-  
-    #endregion
-
-    #region Keyed
-
+    
     [LoggerMessage(LogLevel.Debug, "[{BrokerType}<{KeyType}, {EventType}> [{Id}]] Subscriber added for key [{Key}]")]
     internal static partial void LogSubscriberAddedForKey(this ILogger logger, string brokerType, string keyType, string eventType, Guid id, string key);
 
@@ -43,20 +37,12 @@ internal static partial class LoggerExtensions
     [LoggerMessage(LogLevel.Error, "[{BrokerType}<{KeyType}, {EventType}> [{Id}]] Error invoking handler for event")]
     internal static partial void LogErrorInvokingHandlerForKey(this ILogger logger, Exception ex, string brokerType, string keyType, string eventType, Guid id);
     
-    #endregion
-
-    [LoggerMessage(LogLevel.Debug, "Subscriber added for key {Key} in AsyncKeyedBroker<{KeyType}, {EventType}>. Total subscribers for key: {Count}")]
-    public static partial void LogSubscriberAddedForKeyKeyInAsynckeyedbrokerKeytypeEventtypeTotalSubscribersFor(this ILogger logger, object key, string keyType, string eventType, int count);
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Subscriber added for key {Key} in AsyncKeyedBroker<{KeyType}, {EventType}>. Total subscribers for key: {Count}")]
+    internal static partial void LogAsyncKeyedSubscriberAdded(this ILogger logger, object key, string keyType, string eventType, int count);
     
-    [LoggerMessage(
-        EventId = 1001,
-        Level = LogLevel.Error,
-        Message = "Message queue for {MessageType} stopped because its handler failed")]
+    [LoggerMessage(Level = LogLevel.Error, Message = "Message queue for {MessageType} stopped because its handler failed")]
     internal static partial void LogQueueHandlerFailed(this ILogger logger, Exception exception, string messageType);
 
-    [LoggerMessage(
-        EventId = 1002,
-        Level = LogLevel.Warning,
-        Message = "Message queue for {MessageType} stopped because its handler was canceled")]
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Message queue for {MessageType} stopped because its handler was canceled")]
     internal static partial void LogQueueHandlerCanceled(this ILogger logger, Exception exception, string messageType);
 }

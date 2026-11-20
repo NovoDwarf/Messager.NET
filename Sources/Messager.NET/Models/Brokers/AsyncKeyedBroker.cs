@@ -46,7 +46,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
             
             list.Add(subscription);
             
-            _logger.LogSubscriberAddedForKeyKeyInAsynckeyedbrokerKeytypeEventtypeTotalSubscribersFor(key, typeof(TKey).Name, typeof(TEvent).Name, list.Count);
+            _logger.LogAsyncKeyedSubscriberAdded(key, typeof(TKey).Name, typeof(TEvent).Name, list.Count);
         }
 
         var subscriptionReference = new WeakReference<SubscriberAsync<TEvent>>(subscription);
