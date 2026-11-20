@@ -1,4 +1,4 @@
-namespace Messager.NET.Models.Resources;
+namespace Messager.NET.Entities;
 
 /// <summary>
 /// Provides a mechanism for asynchronous unsubscription that ensures the unsubscribe operation
@@ -28,16 +28,13 @@ public sealed class UnsubscriberAsync : IAsyncDisposable
     public UnsubscriberAsync(Func<ValueTask> unsubscribe)
     {
         ArgumentNullException.ThrowIfNull(unsubscribe);
-
         _unsubscribe = unsubscribe;
     }
 
     /// <summary>
     /// Gets a value indicating whether the unsubscription has been performed.
     /// </summary>
-    public bool IsDisposed => _disposed != 0;
-
-    private int _disposed;
+    public bool IsDisposed => Volatile.Read(ref _unsubscribe) is null;
 
     /// <summary>
     /// Asynchronously executes the unsubscribe operation if it hasn't been performed already.
@@ -52,10 +49,9 @@ public sealed class UnsubscriberAsync : IAsyncDisposable
     /// </returns>
     public async ValueTask DisposeAsync()
     {
-        if (Interlocked.CompareExchange(ref _disposed, 1, 0) != 0)
-            return;
+        var unsubscribe = Interlocked.Exchange(ref _unsubscribe, null);
 
-        var unsubscribe = Interlocked.Exchange(ref _unsubscribe, null)!;
-        await unsubscribe().ConfigureAwait(false);
+        if (unsubscribe is not null)
+            await unsubscribe().ConfigureAwait(false);
     }
 }
