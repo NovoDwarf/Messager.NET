@@ -2,13 +2,13 @@ using Messager.NET.Receivers;
 
 namespace Messager.NET.Entities;
 
-internal sealed class SubscriptionAsync<TEvent>
+internal sealed class SubscriberAsync<TEvent>
 {
     private readonly Func<TEvent, ValueTask>? _strongHandler;
     private readonly Delegate[]? _callbacks;
     private readonly WeakDelegate<Func<TEvent, ValueTask>>? _weakHandler;
 
-    internal SubscriptionAsync(Func<TEvent, ValueTask> handler, SubscriptionReference reference)
+    internal SubscriberAsync(Func<TEvent, ValueTask> handler, SubscriptionReference reference)
     {
         ArgumentNullException.ThrowIfNull(handler);
 
