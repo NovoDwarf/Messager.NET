@@ -1,3 +1,4 @@
+using System.Reflection;
 using Messager.NET.Entities;
 using Messager.NET.Factories;
 using Messager.NET.Microsoft.DependencyInjection.Factory;
@@ -8,6 +9,7 @@ using Messager.NET.Senders;
 using Messager.NET.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Microsoft.DependencyInjection.Extensions;
 
@@ -23,10 +25,9 @@ public static class ServiceCollectionExtensions
 
 		services.AddSingleton<IBrokerFactory, Exchange>(serviceProvider =>
 		{
-			var messagerOptions = serviceProvider.GetRequiredService<MessagerOptions>();
-			var factory = messagerOptions.EnableLogging
-				? serviceProvider.GetService<ILoggerFactory>()
-				: null;
+			var factory = options.EnableLogging
+				? serviceProvider.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance
+				: NullLoggerFactory.Instance;
 
 			return new Exchange(factory);
 		});
@@ -51,19 +52,22 @@ public static class ServiceCollectionExtensions
 		services.AddTransient(typeof(IAsyncReceiver<,>), typeof(AsyncKeyedReceiver<,>));
 	}
 
-	private static void AddRequestRegistrations(IServiceCollection services, IEnumerable<System.Reflection.Assembly> assemblies)
+	private static void AddRequestRegistrations(IServiceCollection services, IEnumerable<Assembly> assemblies)
 	{
 		services.AddScoped<IRequestFactory, RequestFactory>();
 		services.AddScoped<IAsyncRequestFactory, AsyncRequestFactory>();
 
 		foreach (var assembly in assemblies.Distinct())
 		{
-			var requestTypes = assembly.GetTypes()
-				.Where(type => type is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(type));
+			var requestTypes = assembly
+			                   .GetTypes()
+			                   .Where(type => type is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(type));
 
 			foreach (var type in requestTypes)
 			{
-				var interfaces = type.GetInterfaces().Where(ResolveHelper.IsRequestInterface);
+				var interfaces = type
+				                 .GetInterfaces()
+				                 .Where(ResolveHelper.IsRequestInterface);
 
 				foreach (var interfaceType in interfaces)
 					services.AddScoped(interfaceType, type);
