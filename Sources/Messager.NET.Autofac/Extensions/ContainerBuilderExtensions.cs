@@ -9,6 +9,7 @@ using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Messager.NET.Utilities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Autofac.Extensions;
 
@@ -28,8 +29,8 @@ public static class ContainerBuilderExtensions
 			{
 				var registeredOptions = context.Resolve<MessagerOptions>();
 				var loggerFactory = registeredOptions.EnableLogging
-					? context.ResolveOptional<ILoggerFactory>()
-					: null;
+					? context.ResolveOptional<ILoggerFactory>() ?? NullLoggerFactory.Instance
+					: NullLoggerFactory.Instance;
 
 				return new Exchange(loggerFactory);
 			})
