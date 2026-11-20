@@ -1,7 +1,6 @@
 ﻿using Messager.NET.Brokers;
 using Messager.NET.Entities;
 using Messager.NET.Extensions;
-using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
@@ -12,7 +11,7 @@ namespace Messager.NET.Models.Brokers;
 public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, TEvent>, IAsyncReceiver<TKey, TEvent>
     where TKey : notnull
 {
-    private readonly Dictionary<TKey, List<SubscriptionAsync<TEvent>>> _handlers = new();
+    private readonly Dictionary<TKey, List<SubscriberAsync<TEvent>>> _handlers = new();
     private readonly Lock _locker = new();
     
     private readonly ILogger<AsyncKeyedBroker<TKey, TEvent>> _logger;
@@ -34,7 +33,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 
     public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler, SubscriptionReference reference)
     {
-        var subscription = new SubscriptionAsync<TEvent>(handler, reference);
+        var subscription = new SubscriberAsync<TEvent>(handler, reference);
 
         lock (_locker)
         {
@@ -50,7 +49,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
             _logger.LogSubscriberAddedForKeyKeyInAsynckeyedbrokerKeytypeEventtypeTotalSubscribersFor(key, typeof(TKey).Name, typeof(TEvent).Name, list.Count);
         }
 
-        var subscriptionReference = new WeakReference<SubscriptionAsync<TEvent>>(subscription);
+        var subscriptionReference = new WeakReference<SubscriberAsync<TEvent>>(subscription);
 
         return new UnsubscriberAsync(() =>
         {
@@ -91,7 +90,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 
     public async ValueTask SendAsync(TKey key, TEvent evt)
     {
-        List<SubscriptionAsync<TEvent>>? handlersCopy = null;
+        List<SubscriberAsync<TEvent>>? handlersCopy = null;
 
         lock (_locker)
         {
@@ -112,7 +111,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
             await TryInvokeAsync(handler, key, evt);
     }
 
-    private async Task TryInvokeAsync(SubscriptionAsync<TEvent> handler, TKey key, TEvent evt)
+    private async Task TryInvokeAsync(SubscriberAsync<TEvent> handler, TKey key, TEvent evt)
     {
         try
         {

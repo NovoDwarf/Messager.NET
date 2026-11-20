@@ -1,7 +1,6 @@
 ﻿using Messager.NET.Brokers;
 using Messager.NET.Entities;
 using Messager.NET.Extensions;
-using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
@@ -12,7 +11,7 @@ namespace Messager.NET.Models.Brokers;
 public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IReceiver<TKey, TEvent> 
     where TKey : notnull
 {
-    private readonly Dictionary<TKey, List<SubscriptionSync<TEvent>>> _handlers = new();
+    private readonly Dictionary<TKey, List<Subscriber<TEvent>>> _handlers = new();
     private readonly Lock _locker = new();
     
     private readonly ILogger<KeyedBroker<TKey, TEvent>> _logger;
@@ -29,7 +28,7 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
 
     public void Send(TKey key, TEvent evt)
     {
-        List<SubscriptionSync<TEvent>> activeHandlers;
+        List<Subscriber<TEvent>> activeHandlers;
 
         lock (_locker)
         {
@@ -60,7 +59,7 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
 
     public IDisposable Subscribe(TKey key, Action<TEvent> handler, SubscriptionReference reference)
     {
-        var subscription = new SubscriptionSync<TEvent>(handler, reference);
+        var subscription = new Subscriber<TEvent>(handler, reference);
 
         lock (_locker)
         {
@@ -101,7 +100,7 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
         });
     }
 
-    private void TryRemove(List<SubscriptionSync<TEvent>> list)
+    private void TryRemove(List<Subscriber<TEvent>> list)
     {
         var removedCount = list.RemoveAll(s => !s.IsAlive);
 
@@ -114,7 +113,7 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
         }
     }
 
-    private void TryInvoke(SubscriptionSync<TEvent> sub, TEvent evt)
+    private void TryInvoke(Subscriber<TEvent> sub, TEvent evt)
     {
         try
         {

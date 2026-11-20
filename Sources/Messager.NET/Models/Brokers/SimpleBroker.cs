@@ -1,7 +1,6 @@
 ﻿using Messager.NET.Brokers;
 using Messager.NET.Entities;
 using Messager.NET.Extensions;
-using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,7 @@ namespace Messager.NET.Models.Brokers;
 
 public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TEvent>
 {
-    private readonly List<SubscriptionSync<TEvent>> _handlers = [];
+    private readonly List<Subscriber<TEvent>> _handlers = [];
     private readonly Lock _locker = new();
     
     private readonly ILogger<SimpleBroker<TEvent>> _logger;
@@ -27,7 +26,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
 
     public void Send(TEvent evt)
     {
-        List<SubscriptionSync<TEvent>> activeHandlers;
+        List<Subscriber<TEvent>> activeHandlers;
 
         lock (_locker)
         {
@@ -41,7 +40,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
     
     public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference = SubscriptionReference.Strong)
     {
-        var subscription = new SubscriptionSync<TEvent>(handler, reference);
+        var subscription = new Subscriber<TEvent>(handler, reference);
 
         lock (_locker)
         {
@@ -69,7 +68,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
         _logger.LogSubscribersRemoved(BrokerType, EventType, Id, removedCount);
     }
 
-    private void TryInvoke(SubscriptionSync<TEvent> sub, TEvent evt)
+    private void TryInvoke(Subscriber<TEvent> sub, TEvent evt)
     {
         try
         {

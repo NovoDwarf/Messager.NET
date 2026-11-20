@@ -1,7 +1,6 @@
 ﻿using Messager.NET.Brokers;
 using Messager.NET.Entities;
 using Messager.NET.Extensions;
-using Messager.NET.Models.Resources;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,7 @@ namespace Messager.NET.Models.Brokers;
 
 public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IAsyncReceiver<TEvent>
 {
-    private readonly List<SubscriptionAsync<TEvent>> _handlers = [];
+    private readonly List<SubscriberAsync<TEvent>> _handlers = [];
     private readonly Lock _locker = new();
     
     private readonly ILogger<AsyncSimpleBroker<TEvent>> _logger;
@@ -27,7 +26,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
 
     public async ValueTask SendAsync(TEvent evt)
     {
-        List<SubscriptionAsync<TEvent>> copy;
+        List<SubscriberAsync<TEvent>> copy;
 
         lock (_locker)
         {
@@ -43,7 +42,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
 
     public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler, SubscriptionReference reference)
     {
-        var subscription = new SubscriptionAsync<TEvent>(handler, reference);
+        var subscription = new SubscriberAsync<TEvent>(handler, reference);
 
         lock (_locker)
         {
@@ -51,7 +50,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
             _logger.LogSubscriberAdded(BrokerType, EventType, Id);
         }
 
-        var subscriptionReference = new WeakReference<SubscriptionAsync<TEvent>>(subscription);
+        var subscriptionReference = new WeakReference<SubscriberAsync<TEvent>>(subscription);
 
         return new UnsubscriberAsync(() =>
         {
@@ -82,7 +81,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
         }
     }
 
-    private async Task TryInvokeAsync(SubscriptionAsync<TEvent> handler, TEvent evt)
+    private async Task TryInvokeAsync(SubscriberAsync<TEvent> handler, TEvent evt)
     {
         try
         {
