@@ -19,9 +19,7 @@ internal class AsyncKeyedBrokerRegistry
 	internal AsyncKeyedBroker<TKey, TEvent> GetOrCreate<TKey, TEvent>() where TKey : notnull
 	{
 		lock (_locker)
-		{
 			return RegistryHelper.GetOrCreate(_brokers, (typeof(TKey), typeof(TEvent)), New<TKey, TEvent>);
-		}
 	}
 
 	private AsyncKeyedBroker<TKey, TEvent> New<TKey, TEvent>() where TKey : notnull
