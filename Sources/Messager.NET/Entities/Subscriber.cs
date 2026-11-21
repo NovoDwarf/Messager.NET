@@ -9,6 +9,8 @@ internal sealed class Subscriber<TEvent>
 
     internal Subscriber(Action<TEvent> handler, SubscriptionReference reference)
     {
+        ArgumentNullException.ThrowIfNull(handler);
+
         switch (reference)
         {
             case SubscriptionReference.Strong: _strongHandler = handler; break;
@@ -17,11 +19,20 @@ internal sealed class Subscriber<TEvent>
         }
     }
 
-    internal bool IsAlive => _strongHandler != null || _weakHandler!.IsAlive;
+    internal bool IsAlive => _strongHandler is not null || _weakHandler?.IsAlive == true;
+
+    internal bool Matches(Action<TEvent> handler)
+    {
+        ArgumentNullException.ThrowIfNull(handler);
+
+        return _strongHandler is not null
+            ? _strongHandler == handler
+            : _weakHandler!.Matches(handler);
+    }
 
     internal void Invoke(TEvent evt)
     {
-        if (_strongHandler != null)
+        if (_strongHandler is not null)
         {
             _strongHandler(evt);
             return;
