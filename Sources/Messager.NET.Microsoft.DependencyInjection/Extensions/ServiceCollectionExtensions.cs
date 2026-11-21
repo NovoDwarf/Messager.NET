@@ -1,13 +1,14 @@
 using System.Reflection;
 using Messager.NET.Entities;
 using Messager.NET.Factories;
-using Messager.NET.Microsoft.DependencyInjection.Factory;
+using Messager.NET.Microsoft.DependencyInjection.Factories;
 using Messager.NET.Models.PubSub.Receivers;
 using Messager.NET.Models.PubSub.Senders;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Messager.NET.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -36,8 +37,6 @@ public static class ServiceCollectionExtensions
 
 			return new Exchange(loggerFactory);
 		});
-
-		services.AddSingleton<IKeyedBrokerFactory>(serviceProvider => (Exchange)serviceProvider.GetRequiredService<IBrokerFactory>());
 
 		services.TryAddSingleton<IBrokerFactory>(sp => sp.GetRequiredService<Exchange>());
 		services.TryAddSingleton<IKeyedBrokerFactory>(sp => sp.GetRequiredService<Exchange>());
