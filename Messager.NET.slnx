@@ -23,5 +23,7 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/Messager.NET.Tests/Messager.NET.Tests.csproj" />
+    <Project Path="Tests/Messager.NET.Autofac.Tests/Messager.NET.Autofac.Tests.csproj" />
+    <Project Path="Tests/Messager.NET.Microsoft.DependencyInjection.Tests/Messager.NET.Microsoft.DependencyInjection.Tests.csproj" />
   </Folder>
 </Solution>
