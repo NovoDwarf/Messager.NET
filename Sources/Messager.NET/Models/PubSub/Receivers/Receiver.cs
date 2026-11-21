@@ -11,12 +11,7 @@ public class Receiver<TEvent> : IReceiver<TEvent>
     {
         _impl = factory.GetReceiver<TEvent>();
     }
-
-    public IDisposable Subscribe(Action<TEvent> handler)
-    {
-        return _impl.Subscribe(handler);
-    }
-
+    
     public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference)
     {
         return _impl.Subscribe(handler, reference);

@@ -12,12 +12,7 @@ public class KeyedReceiver<TKey, TEvent> : IReceiver<TKey, TEvent>
     {
         _impl = factory.GetKeyedReceiver<TKey, TEvent>();
     }
-
-    public IDisposable Subscribe(TKey key, Action<TEvent> handler)
-    {
-        return _impl.Subscribe(key, handler);
-    }
-
+    
     public IDisposable Subscribe(TKey key, Action<TEvent> handler, SubscriptionReference reference)
     {
         return _impl.Subscribe(key, handler, reference);
