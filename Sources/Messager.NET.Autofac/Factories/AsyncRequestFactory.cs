@@ -2,7 +2,7 @@ using Autofac;
 using Messager.NET.Factories;
 using Messager.NET.Requests;
 
-namespace Messager.NET.Autofac.Factory;
+namespace Messager.NET.Autofac.Factories;
 
 public class AsyncRequestFactory : IAsyncRequestFactory
 {
