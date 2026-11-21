@@ -8,7 +8,7 @@ internal interface ISimpleBroker
 	/// <summary>
 	/// Unique identifier of the broker instance.
 	/// </summary>
-	public Guid Id { get; internal set; }
+	public Guid Id { get; }
 
 	/// <summary>
 	/// Runtime broker type name used in diagnostics.
