@@ -3,6 +3,7 @@ using Messager.NET.Models.Registers;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Entities;
 
@@ -14,8 +15,14 @@ public sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
     private readonly AsyncSimpleBrokerRegistry _asyncSimpleBrokers;
     private readonly AsyncKeyedBrokerRegistry _asyncKeyedBrokers;
     
-    public Exchange(ILoggerFactory? loggerFactory = null)
+    public Exchange() : this(NullLoggerFactory.Instance)
     {
+    }
+
+    public Exchange(ILoggerFactory? loggerFactory)
+    {
+        loggerFactory ??= NullLoggerFactory.Instance;
+        
         _simpleBrokers = new SimpleBrokerRegistry(loggerFactory);
         _keyedBrokers = new KeyedBrokerRegistry(loggerFactory);
         
