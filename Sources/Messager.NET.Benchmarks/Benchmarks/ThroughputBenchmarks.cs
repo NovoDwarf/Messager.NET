@@ -8,10 +8,14 @@ namespace Messager.NET.Benchmarks.Benchmarks;
 public class ThroughputBenchmark
 {
     private event EventHandler<int>? StandardEvent;
+
+    private readonly List<IDisposable> _subscriptions = [];
     
-    private ISender<int> _messagerSender = null!;
-    private IDisposable _subscription = null!;
+    private ISender<int> _sender = null!;
     private int _receivedCount;
+
+    [Params(1, 10, 100)]
+    public int SubscriberCount { get; set; }
 
     [Params(1000, 10000, 100000)]
     public int TotalMessages { get; set; }
@@ -20,26 +24,30 @@ public class ThroughputBenchmark
     public void Setup()
     {
         var exchange = new Exchange();
-        
-        _messagerSender = exchange.GetSender<int>();
-        _subscription = exchange.GetReceiver<int>().Subscribe(OnReceived);
-       
-        StandardEvent = OnStandardReceived;
 
-        // Check repeated calls too, so an accumulating event subscription cannot bias measurements.
-        for (var i = 0; i < 2; i++)
+        _sender = exchange.GetSender<int>();
+        var receiver = exchange.GetReceiver<int>();
+
+        for (var i = 0; i < SubscriberCount; i++)
         {
-            if (StandardEvents_Throughput() != TotalMessages || Messager_Throughput() != TotalMessages)
-            {
-                throw new InvalidOperationException("Each message must reach exactly one handler.");
-            }
+            StandardEvent += OnStandardReceived;
+            _subscriptions.Add(receiver.Subscribe(OnReceived));
         }
+
+        if (StandardEvents_Throughput() != TotalMessages * SubscriberCount)
+            throw new InvalidOperationException("Standard event delivery count mismatch.");
+
+        if (Messager_Throughput() != TotalMessages * SubscriberCount)
+            throw new InvalidOperationException("Messager delivery count mismatch.");
     }
 
     [GlobalCleanup]
     public void Cleanup()
     {
-        _subscription.Dispose();
+        foreach (var subscription in _subscriptions)
+            subscription.Dispose();
+
+        _subscriptions.Clear();
         StandardEvent = null;
     }
 
@@ -48,7 +56,7 @@ public class ThroughputBenchmark
     {
         _receivedCount = 0;
 
-        for (var i = 0; i < TotalMessages; i++) 
+        for (var i = 0; i < TotalMessages; i++)
             StandardEvent?.Invoke(this, i);
 
         return _receivedCount;
@@ -59,19 +67,13 @@ public class ThroughputBenchmark
     {
         _receivedCount = 0;
 
-        for (var i = 0; i < TotalMessages; i++) 
-            _messagerSender.Send(i);
+        for (var i = 0; i < TotalMessages; i++)
+            _sender.Send(i);
 
         return _receivedCount;
     }
 
-    private void OnStandardReceived(object? sender, int message)
-    {
-        OnReceived(message);
-    }
+    private void OnStandardReceived(object? sender, int message) => OnReceived(message);
 
-    private void OnReceived(int message)
-    {
-        _receivedCount++;
-    }
+    private void OnReceived(int message) => _receivedCount++;
 }
