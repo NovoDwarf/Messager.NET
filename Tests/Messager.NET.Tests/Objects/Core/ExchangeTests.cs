@@ -10,6 +10,25 @@ namespace Messager.NET.Tests.Objects.Core;
 public class ExchangeTests
 {
 	[Test]
+	public void KeyedBroker_WithoutLogging_ShouldDeliverWithoutFormattingKey()
+	{
+		var exchange = new Exchange();
+		var key = new UnformattableKey();
+		var received = 0;
+		using var subscription = exchange.GetKeyedReceiver<UnformattableKey, int>()
+		                                 .Subscribe(key, value => received = value);
+
+		exchange.GetKeyedSender<UnformattableKey, int>().Send(key, 42);
+
+		Assert.That(received, Is.EqualTo(42));
+	}
+
+	private sealed class UnformattableKey
+	{
+		public override string ToString() => throw new InvalidOperationException();
+	}
+
+	[Test]
 	public void Constructor_WithoutLoggerFactory_ShouldCreateInstance()
 	{
 		var exchange = new Exchange();
