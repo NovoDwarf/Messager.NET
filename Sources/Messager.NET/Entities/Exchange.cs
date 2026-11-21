@@ -9,6 +9,8 @@ namespace Messager.NET.Entities;
 
 public sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
 {
+    private static readonly Lazy<Exchange> GlobalInstance = new(() => new Exchange(), LazyThreadSafetyMode.ExecutionAndPublication);
+    
     private readonly SimpleBrokerRegistry _simpleBrokers;
     private readonly KeyedBrokerRegistry _keyedBrokers;
     
@@ -29,6 +31,8 @@ public sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
         _asyncSimpleBrokers = new AsyncSimpleBrokerRegistry(loggerFactory);
         _asyncKeyedBrokers = new AsyncKeyedBrokerRegistry(loggerFactory);
     }
+
+    public static Exchange Default => GlobalInstance.Value;
 
     public ISender<TEvent> GetSender<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();
     public IReceiver<TEvent> GetReceiver<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();
