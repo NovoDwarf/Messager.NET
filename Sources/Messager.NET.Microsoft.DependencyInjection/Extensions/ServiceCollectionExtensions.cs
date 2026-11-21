@@ -25,8 +25,11 @@ public static class ServiceCollectionExtensions
 
 		services.AddSingleton<IBrokerFactory, Exchange>(serviceProvider =>
 		{
-			var factory = options.EnableLogging
-				? serviceProvider.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance
+			if (options.UseGlobal)
+				return Exchange.Default;
+
+			var loggerFactory = options.EnableLogging
+				? sp.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance
 				: NullLoggerFactory.Instance;
 
 			return new Exchange(factory);
