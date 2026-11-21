@@ -1,6 +1,7 @@
 using System.Threading.Channels;
 using Messager.NET.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Queues;
 
@@ -15,7 +16,7 @@ namespace Messager.NET.Queues;
 public sealed class MessageQueue<TMessage> : IMessageQueue<TMessage>, IAsyncDisposable
 {
     private readonly Channel<TMessage> _channel;
-    private readonly ILogger<MessageQueue<TMessage>>? _logger;
+    private readonly ILogger<MessageQueue<TMessage>> _logger;
 
     /// <summary>
     /// Creates a queue and starts its worker. Multicast handlers are awaited in invocation-list order.
@@ -32,7 +33,7 @@ public sealed class MessageQueue<TMessage> : IMessageQueue<TMessage>, IAsyncDisp
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
 
         _callbacks = handler.GetInvocationList();
-        _logger = logger;
+        _logger = logger ?? NullLogger<MessageQueue<TMessage>>.Instance;
         _channel = Channel.CreateBounded<TMessage>(new BoundedChannelOptions(capacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
@@ -107,13 +108,13 @@ public sealed class MessageQueue<TMessage> : IMessageQueue<TMessage>, IAsyncDisp
         catch (OperationCanceledException exception)
         {
             _channel.Writer.TryComplete(exception);
-            _logger?.LogQueueHandlerCanceled(exception, typeof(TMessage).FullName ?? typeof(TMessage).Name);
+            _logger.LogQueueHandlerCanceled(exception, typeof(TMessage).FullName ?? typeof(TMessage).Name);
             throw;
         }
         catch (Exception exception)
         {
             _channel.Writer.TryComplete(exception);
-            _logger?.LogQueueHandlerFailed(exception, typeof(TMessage).FullName ?? typeof(TMessage).Name);
+            _logger.LogQueueHandlerFailed(exception, typeof(TMessage).FullName ?? typeof(TMessage).Name);
             throw;
         }
         finally

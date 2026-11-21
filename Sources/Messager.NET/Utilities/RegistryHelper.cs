@@ -1,17 +1,22 @@
-﻿namespace Messager.NET.Utilities;
+﻿using Messager.NET.Exceptions;
+
+namespace Messager.NET.Utilities;
 
 internal static class RegistryHelper
 {
-	public static TBroker GetOrCreate<TKey, TBroker>(Dictionary<TKey, object> dict, TKey key, Func<TBroker> factory)
-		where TBroker : class 
+	public static TBroker GetOrCreate<TKey, TBroker>(Dictionary<TKey, object> dictionary, TKey key, Func<TBroker> factory)
 		where TKey : notnull
+		where TBroker : class
 	{
-		if (dict.TryGetValue(key, out var existing) && existing is TBroker broker)
-			return broker;
+		ArgumentNullException.ThrowIfNull(dictionary);
+		ArgumentNullException.ThrowIfNull(factory);
 
-		var newBroker = factory();
-		dict[key] = newBroker;
-		
-		return newBroker;
+		if (dictionary.TryGetValue(key, out var existing))
+			return existing as TBroker ?? throw new BrokerRegistryTypeMismatchException(key, typeof(TBroker), typeof(TKey));
+
+		var broker = factory();
+		dictionary.Add(key, broker);
+
+		return broker;
 	}
 }

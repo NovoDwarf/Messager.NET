@@ -11,19 +11,16 @@ public class AsyncReceiver<TEvent> : IAsyncReceiver<TEvent>
     {
         _impl = factory.GetAsyncReceiver<TEvent>();
     }
-
-    public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler)
+    
+    public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler, SubscriptionReference reference = SubscriptionReference.Strong)
     {
-        return _impl.Subscribe(handler);
+        return _impl.Subscribe(handler, reference);
     }
-
+    
     public void Unsubscribe(Func<TEvent, ValueTask> handler)
     {
         _impl.Unsubscribe(handler);
     }
 
-    public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler, SubscriptionReference reference)
-    {
-        return _impl.Subscribe(handler, reference);
-    }
+
 }

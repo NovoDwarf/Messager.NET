@@ -3,25 +3,36 @@ using Messager.NET.Models.Registers;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Entities;
 
 public sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
 {
+    private static readonly Lazy<Exchange> GlobalInstance = new(() => new Exchange(), LazyThreadSafetyMode.ExecutionAndPublication);
+    
     private readonly SimpleBrokerRegistry _simpleBrokers;
     private readonly KeyedBrokerRegistry _keyedBrokers;
     
     private readonly AsyncSimpleBrokerRegistry _asyncSimpleBrokers;
     private readonly AsyncKeyedBrokerRegistry _asyncKeyedBrokers;
     
-    public Exchange(ILoggerFactory? loggerFactory = null)
+    public Exchange() : this(NullLoggerFactory.Instance)
     {
+    }
+
+    public Exchange(ILoggerFactory? loggerFactory)
+    {
+        loggerFactory ??= NullLoggerFactory.Instance;
+        
         _simpleBrokers = new SimpleBrokerRegistry(loggerFactory);
         _keyedBrokers = new KeyedBrokerRegistry(loggerFactory);
         
         _asyncSimpleBrokers = new AsyncSimpleBrokerRegistry(loggerFactory);
         _asyncKeyedBrokers = new AsyncKeyedBrokerRegistry(loggerFactory);
     }
+
+    public static Exchange Default => GlobalInstance.Value;
 
     public ISender<TEvent> GetSender<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();
     public IReceiver<TEvent> GetReceiver<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();

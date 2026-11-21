@@ -1,13 +1,16 @@
+using System.Reflection;
 using Messager.NET.Entities;
 using Messager.NET.Factories;
-using Messager.NET.Microsoft.DependencyInjection.Factory;
+using Messager.NET.Microsoft.DependencyInjection.Factories;
 using Messager.NET.Models.PubSub.Receivers;
 using Messager.NET.Models.PubSub.Senders;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;
 using Messager.NET.Utilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Microsoft.DependencyInjection.Extensions;
 
@@ -15,24 +18,29 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddMessager(this IServiceCollection services, Action<MessagerOptions>? configureOptions = null)
 	{
+		if (services.Any(x => x.ServiceType == typeof(MessagerOptions)))
+			throw new InvalidOperationException("Messager.NET is already registered.");
+		
 		var options = new MessagerOptions();
 
 		configureOptions?.Invoke(options);
 
-		services.AddSingleton(options);
-
-		services.AddSingleton<IBrokerFactory, Exchange>(serviceProvider =>
+		services.TryAddSingleton(options);
+		services.TryAddSingleton<Exchange>(sp =>
 		{
-			var messagerOptions = serviceProvider.GetRequiredService<MessagerOptions>();
-			var factory = messagerOptions.EnableLogging
-				? serviceProvider.GetService<ILoggerFactory>()
-				: null;
+			if (options.UseGlobal)
+				return Exchange.Default;
 
-			return new Exchange(factory);
+			var loggerFactory = options.EnableLogging
+				? sp.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance
+				: NullLoggerFactory.Instance;
+
+			return new Exchange(loggerFactory);
 		});
 
-		services.AddSingleton<IKeyedBrokerFactory>(serviceProvider => (Exchange)serviceProvider.GetRequiredService<IBrokerFactory>());
-
+		services.TryAddSingleton<IBrokerFactory>(sp => sp.GetRequiredService<Exchange>());
+		services.TryAddSingleton<IKeyedBrokerFactory>(sp => sp.GetRequiredService<Exchange>());
+		
 		AddPubSubRegistrations(services);
 		AddRequestRegistrations(services, options.RequestAssemblies);
 
@@ -41,32 +49,33 @@ public static class ServiceCollectionExtensions
 
 	private static void AddPubSubRegistrations(IServiceCollection services)
 	{
-		services.AddTransient(typeof(ISender<>), typeof(Sender<>));
-		services.AddTransient(typeof(IReceiver<>), typeof(Receiver<>));
-		services.AddTransient(typeof(IAsyncSender<>), typeof(AsyncSender<>));
-		services.AddTransient(typeof(IAsyncReceiver<>), typeof(AsyncReceiver<>));
-		services.AddTransient(typeof(ISender<,>), typeof(KeyedSender<,>));
-		services.AddTransient(typeof(IReceiver<,>), typeof(KeyedReceiver<,>));
-		services.AddTransient(typeof(IAsyncSender<,>), typeof(AsyncKeyedSender<,>));
-		services.AddTransient(typeof(IAsyncReceiver<,>), typeof(AsyncKeyedReceiver<,>));
+		services.TryAddTransient(typeof(ISender<>), typeof(Sender<>));
+		services.TryAddTransient(typeof(IReceiver<>), typeof(Receiver<>));
+		services.TryAddTransient(typeof(IAsyncSender<>), typeof(AsyncSender<>));
+		services.TryAddTransient(typeof(IAsyncReceiver<>), typeof(AsyncReceiver<>));
+		services.TryAddTransient(typeof(ISender<,>), typeof(KeyedSender<,>));
+		services.TryAddTransient(typeof(IReceiver<,>), typeof(KeyedReceiver<,>));
+		services.TryAddTransient(typeof(IAsyncSender<,>), typeof(AsyncKeyedSender<,>));
+		services.TryAddTransient(typeof(IAsyncReceiver<,>), typeof(AsyncKeyedReceiver<,>));
 	}
 
-	private static void AddRequestRegistrations(IServiceCollection services, IEnumerable<System.Reflection.Assembly> assemblies)
+	private static void AddRequestRegistrations(IServiceCollection services, IEnumerable<Assembly> assemblies)
 	{
-		services.AddScoped<IRequestFactory, RequestFactory>();
-		services.AddScoped<IAsyncRequestFactory, AsyncRequestFactory>();
+		services.TryAddScoped<IRequestFactory, RequestFactory>();
+		services.TryAddScoped<IAsyncRequestFactory, AsyncRequestFactory>();
 
 		foreach (var assembly in assemblies.Distinct())
 		{
-			var requestTypes = assembly.GetTypes()
-				.Where(type => type is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(type));
+			var requestTypes = assembly
+			                   .GetTypes()
+			                   .Where(type => type is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(type));
 
 			foreach (var type in requestTypes)
 			{
 				var interfaces = type.GetInterfaces().Where(ResolveHelper.IsRequestInterface);
 
 				foreach (var interfaceType in interfaces)
-					services.AddScoped(interfaceType, type);
+					services.TryAddScoped(interfaceType, type);
 			}
 		}
 	}
