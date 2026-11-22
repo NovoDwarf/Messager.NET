@@ -11,7 +11,7 @@ public static class Program
 	public static Task Main(string[] args)
 	{
 		var builder = Host.CreateApplicationBuilder(args);
-		builder.Services.AddMessager(options => options.RequestAssemblies.Add(typeof(AsyncRequestService).Assembly));
+		builder.Services.AddMessager(options => options.AddRequestsFromAssemblyOf(typeof(AsyncRequestService).Assembly));
 		builder.Services.AddSingleton<AsyncRequestService>();
 		builder.Services.AddSingleton<AsyncRequestWithInputService>();
 

@@ -4,40 +4,131 @@ namespace Messager.NET.Entities;
 
 internal sealed class WeakAction<T>
 {
-    private readonly WeakDelegate<Action<T>> _handler;
+    private readonly Invocation[] _invocations;
 
-    internal WeakAction(Action<T> action)
+    internal WeakAction(Action<T> handler)
     {
-        _handler = new WeakDelegate<Action<T>>(action);
+        ArgumentNullException.ThrowIfNull(handler);
+
+        var callbacks = handler.GetInvocationList();
+        _invocations = new Invocation[callbacks.Length];
+
+        for (var i = 0; i < callbacks.Length; i++)
+            _invocations[i] = new Invocation(callbacks[i]);
     }
 
-    internal bool IsAlive => _handler.IsAlive;
+    internal bool IsAlive
+    {
+        get
+        {
+            foreach (var invocation in _invocations)
+            {
+                if (invocation.IsAlive)
+                    return true;
+            }
+
+            return false;
+        }
+    }
 
     internal bool TryInvoke(T arg)
     {
         var invoked = false;
 
-        for (var i = 0; i < _handler.Count; i++)
+        foreach (var invocation in _invocations)
         {
-            var callback = _handler.GetCallback(i);
-
-            if (callback == null)
-                continue;
-            
-            try
-            {
-                callback(arg);
-            }
-            catch (Exception exception)
-            {
-                throw new TargetInvocationException(exception);
-            }
-
-            invoked = true;
+            if (invocation.TryInvoke(arg))
+                invoked = true;
         }
 
         return invoked;
     }
 
-    internal bool Matches(Action<T> action) => _handler.Matches(action);
+    internal bool Matches(Action<T> handler)
+    {
+        ArgumentNullException.ThrowIfNull(handler);
+
+        var callbacks = handler.GetInvocationList();
+
+        if (callbacks.Length != _invocations.Length)
+            return false;
+
+        for (var i = 0; i < callbacks.Length; i++)
+        {
+            if (!_invocations[i].Matches(callbacks[i]))
+                return false;
+        }
+
+        return true;
+    }
+
+    private sealed class Invocation
+    {
+        private readonly WeakInvocation _invocation;
+        private readonly IInvoker? _invoker;
+
+        internal Invocation(Delegate callback)
+        {
+            _invocation = new WeakInvocation(callback);
+
+            if (_invocation.TryGetStaticHandler<Action<T>>(out _))
+                return;
+
+            var method = _invocation.Method;
+
+            if (method.IsStatic)
+                throw new NotSupportedException("Closed static delegates are not supported.");
+
+            var targetType = callback.Target!.GetType();
+
+            if (targetType.IsValueType)
+                throw new NotSupportedException("Value-type targets are not supported.");
+
+            var invokerType = typeof(Invoker<>).MakeGenericType(targetType);
+
+            _invoker = (IInvoker)Activator.CreateInstance(invokerType, method)!;
+        }
+
+        internal bool IsAlive => _invocation.IsAlive;
+
+        internal bool Matches(Delegate callback) =>
+            _invocation.Matches(callback);
+
+        internal bool TryInvoke(T arg)
+        {
+            if (_invocation.TryGetStaticHandler<Action<T>>(out var handler))
+            {
+                handler!(arg);
+                return true;
+            }
+
+            if (!_invocation.TryGetTarget(out var target))
+                return false;
+
+            _invoker!.Invoke(target!, arg);
+
+            GC.KeepAlive(target);
+            return true;
+        }
+    }
+
+    private interface IInvoker
+    {
+        void Invoke(object target, T arg);
+    }
+
+    private sealed class Invoker<TTarget> : IInvoker where TTarget : class
+    {
+        private readonly Action<TTarget, T> _handler;
+
+        public Invoker(MethodInfo method)
+        {
+            _handler = method.CreateDelegate<Action<TTarget, T>>();
+        }
+
+        public void Invoke(object target, T arg)
+        {
+            _handler((TTarget)target, arg);
+        }
+    }
 }

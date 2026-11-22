@@ -1,6 +1,6 @@
-﻿using NUnit.Framework;
+﻿using Messager.NET.Entities;
 
-namespace NovoDwarf.Utilities.Tests.Resources;
+namespace Messager.NET.Tests;
 
 [TestFixture]
 public partial class UnsubscriberAsyncTests
