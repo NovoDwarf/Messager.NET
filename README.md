@@ -7,6 +7,10 @@ A messaging library for .NET with typed pub/sub, request contracts, and an in-me
 
 The projects target .NET 10 and .NET 11. Pub/sub supports synchronous and asynchronous handlers, with optional keys. `Exchange` creates brokers as they are needed and provides senders and receivers for each event type.
 
+## Performance
+
+![Messager.NET Benchmarks](.github/Assets/MessagerThroughputBenchmark.svg)
+
 ## Projects
 
 - `Messager.NET.Core` — interfaces for messaging, requests, and queues.
@@ -89,8 +93,6 @@ All synchronous and asynchronous receivers, including keyed receivers and DI wra
 - Static callbacks remain available in either mode. A multicast weak subscription skips collected targets and  continues to invoke surviving callbacks in order. Dead registrations are cleaned up on subsequent sends.
 - Removing a subscription does not interrupt invocations already included in a send snapshot. An asynchronous callback can retain its target until its operation completes.
 
-The original `Subscribe(handler)` and `Subscribe(key, handler)` overloads preserve their previous behavior: synchronous subscriptions use weak broker references with a handle that retains the callbacks; asynchronous subscriptions use strong references. Use the explicit overloads for unambiguous ownership in new code.
-
 Existing third-party receiver implementations can continue to implement only the original overloads. The new overloads throw `NotSupportedException` unless the implementation supports explicit reference modes.
 
 ### Background queues
@@ -153,6 +155,20 @@ The [Examples](Examples) directory contains synchronous, asynchronous, keyed, re
 
 ```text
 dotnet run --project Examples/Messager.NET.Simple -f net10.0
+```
+
+## Tests and benchmarks
+
+Tests are grouped by the production project they exercise: runtime, Microsoft DI, and Autofac.
+
+```text
+dotnet test Messager.NET.slnx -c Release -p:GeneratePackageOnBuild=false
+```
+
+Run the BenchmarkDotNet:
+
+```text
+dotnet run --project Sources/Messager.NET.Benchmarks -c Release -f net10.0
 ```
 
 ## Thanks
