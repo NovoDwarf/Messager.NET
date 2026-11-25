@@ -38,8 +38,8 @@ public sealed class MessageQueueLoggingTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(logger.Count, Is.EqualTo(1));
-            Assert.That(logger.EventId.Id, Is.EqualTo(canceled ? 1002 : 1001));
-            Assert.That(logger.Level, Is.EqualTo(canceled ? LogLevel.Warning : LogLevel.Error));
+            Assert.That(logger.EventId.Id, Is.EqualTo(canceled ? 1201 : 1200));
+            Assert.That(logger.Level, Is.EqualTo(canceled ? LogLevel.Information : LogLevel.Error));
             Assert.That(logger.Exception, canceled
                 ? Is.InstanceOf<OperationCanceledException>()
                 : Is.SameAs(failure));

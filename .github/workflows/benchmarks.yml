@@ -1,0 +1,42 @@
+name: Benchmarks
+
+on:
+  workflow_dispatch:
+    inputs:
+      framework:
+        description: Target framework
+        type: choice
+        options: [net10.0, net11.0]
+        default: net10.0
+      filter:
+        description: BenchmarkDotNet filter
+        default: '*ThroughputEqualityBenchmark*'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            10.0.x
+            11.0.x
+
+      - name: Run benchmarks
+        env:
+          BENCHMARK_FRAMEWORK: ${{ inputs.framework }}
+          BENCHMARK_FILTER: ${{ inputs.filter }}
+        run: dotnet run --project Sources/Messager.NET.Benchmarks -c Release -f "$BENCHMARK_FRAMEWORK" -- --filter "$BENCHMARK_FILTER" --exporters json
+      - name: Upload benchmark reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ inputs.framework }}
+          path: BenchmarkDotNet.Artifacts/
+          if-no-files-found: warn

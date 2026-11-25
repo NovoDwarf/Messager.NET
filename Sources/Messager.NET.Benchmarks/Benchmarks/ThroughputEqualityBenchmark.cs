@@ -1,7 +1,4 @@
-#if NET10_0
-
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNetVisualizer;
 using CommunityToolkit.Mvvm.Messaging;
 using MessagePipe;
 using Messager.NET.Entities;
@@ -12,7 +9,6 @@ namespace Messager.NET.Benchmarks.Benchmarks;
 
 [MemoryDiagnoser]
 [CsvExporter]
-[CsvMeasurementsExporter]
 public class ThroughputEqualityBenchmark
 {
 	private sealed class BenchmarkMessage
@@ -200,5 +196,3 @@ public class ThroughputEqualityBenchmark
 
 	private void OnReceived(BenchmarkMessage message) => _receivedCount++;
 }
-
-#endif

@@ -154,4 +154,15 @@ public partial class WeakActionTests
 
 		void Action(string value) => throw new InvalidOperationException("Test exception");
 	}
+
+    [Test]
+    public void TryInvoke_ShouldPreserveInstanceHandlerExceptionAsInnerException()
+    {
+        var failure = new InvalidOperationException("Test exception");
+        var weakAction = new WeakAction<string>(_ => throw failure);
+
+        var exception = Assert.Throws<TargetInvocationException>(() => weakAction.TryInvoke("Test"));
+
+        Assert.That(exception!.InnerException, Is.SameAs(failure));
+    }
 }
