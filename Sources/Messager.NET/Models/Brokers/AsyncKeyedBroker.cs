@@ -53,9 +53,11 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 
         _logger.LogKeyedSubscriberAdded(BrokerType, KeyType, EventType, Id, key, count);
 
+        var weakSubscription = new WeakReference<SubscriberAsync<TEvent>>(subscription);
         return new UnsubscriberAsync(() =>
         {
-            RemoveSubscription(key, subscription);
+            if (weakSubscription.TryGetTarget(out var target))
+                RemoveSubscription(key, target);
             return ValueTask.CompletedTask;
         });
     }

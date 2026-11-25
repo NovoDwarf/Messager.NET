@@ -71,15 +71,14 @@ internal sealed class WeakActionAsync<T>
 
 			var method = _invocation.Method;
 
-			if (method.IsStatic)
-				throw new NotSupportedException("Closed static delegates are not supported.");
-
-			var targetType = callback.Target!.GetType();
+			var targetType = method.IsStatic
+				? method.GetParameters()[0].ParameterType
+				: callback.Target!.GetType();
 
 			if (targetType.IsValueType)
 				throw new NotSupportedException("Value-type targets are not supported.");
 
-			var invokerType = typeof(Invoker<>).MakeGenericType(targetType);
+			var invokerType = typeof(Invoker<>).MakeGenericType(typeof(T), targetType);
 
 			_invoker = (IInvoker)Activator.CreateInstance(invokerType, method)!;
 		}

@@ -52,12 +52,16 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
 
         _logger.LogSubscriberAdded(BrokerType, EventType, Id);
 
+        var weakSubscription = new WeakReference<SubscriberAsync<TEvent>>(subscription);
         return new UnsubscriberAsync(() =>
         {
             var removed = false;
 
-            lock (_locker) 
-                removed = RemoveSubscription(subscription);
+            if (weakSubscription.TryGetTarget(out var target))
+            {
+                lock (_locker)
+                    removed = RemoveSubscription(target);
+            }
 
             if (removed) 
                 _logger.LogSubscriberRemoved(BrokerType, EventType, Id);

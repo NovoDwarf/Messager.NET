@@ -25,6 +25,105 @@ public sealed class SubscriptionReferenceTests
         GC.KeepAlive(exchange);
     }
 
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task RepeatedDisposeAfterUnsubscribe_PreservesDuplicateSubscription(bool keyed)
+    {
+        var exchange = new Exchange();
+        var counter = new Counter();
+        var subscriber = new Subscriber(counter);
+        var receiver = exchange.GetAsyncReceiver<int>();
+        var keyedReceiver = exchange.GetAsyncKeyedReceiver<string, int>();
+        var first = keyed
+            ? keyedReceiver.Subscribe("key", subscriber.HandleAsync)
+            : receiver.Subscribe(subscriber.HandleAsync);
+        var second = keyed
+            ? keyedReceiver.Subscribe("key", subscriber.HandleAsync)
+            : receiver.Subscribe(subscriber.HandleAsync);
+
+        if (keyed)
+            keyedReceiver.Unsubscribe("key", subscriber.HandleAsync);
+        else
+            receiver.Unsubscribe(subscriber.HandleAsync);
+
+        await Task.WhenAll(
+            Task.Run(async () => await first.DisposeAsync()),
+            Task.Run(async () => await first.DisposeAsync()));
+
+        await SendAsync(exchange, true, keyed);
+        Assert.That(counter.Calls, Is.EqualTo(1));
+        await second.DisposeAsync();
+        await SendAsync(exchange, true, keyed);
+        Assert.That(counter.Calls, Is.EqualTo(1));
+        GC.KeepAlive(subscriber);
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task Unsubscribe_DuringSend_AllowsCurrentInvocationToComplete(bool keyed)
+    {
+        var exchange = new Exchange();
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var resume = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var calls = 0;
+        async ValueTask Handle(int value)
+        {
+            started.TrySetResult();
+            await resume.Task;
+            calls++;
+        }
+
+        var receiver = exchange.GetAsyncReceiver<int>();
+        var keyedReceiver = exchange.GetAsyncKeyedReceiver<string, int>();
+        var handle = keyed ? keyedReceiver.Subscribe("key", Handle) : receiver.Subscribe(Handle);
+        var send = SendAsync(exchange, true, keyed).AsTask();
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        if (keyed)
+            keyedReceiver.Unsubscribe("key", Handle);
+        else
+            receiver.Unsubscribe(Handle);
+
+        resume.SetResult();
+        await send.WaitAsync(TimeSpan.FromSeconds(10));
+        await SendAsync(exchange, true, keyed);
+        Assert.That(calls, Is.EqualTo(1));
+        await handle.DisposeAsync();
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task ConcurrentUnsubscribeAndDispose_LeaveConsistentSubscriptions(bool keyed)
+    {
+        for (var i = 0; i < 50; i++)
+        {
+            var exchange = new Exchange();
+            var counter = new Counter();
+            var subscriber = new Subscriber(counter);
+            var receiver = exchange.GetAsyncReceiver<int>();
+            var keyedReceiver = exchange.GetAsyncKeyedReceiver<string, int>();
+            var first = keyed ? keyedReceiver.Subscribe("key", subscriber.HandleAsync) : receiver.Subscribe(subscriber.HandleAsync);
+            var second = keyed ? keyedReceiver.Subscribe("key", subscriber.HandleAsync) : receiver.Subscribe(subscriber.HandleAsync);
+
+            await Task.WhenAll(
+                Task.Run(() =>
+                {
+                    if (keyed)
+                        keyedReceiver.Unsubscribe("key", subscriber.HandleAsync);
+                    else
+                        receiver.Unsubscribe(subscriber.HandleAsync);
+                }),
+                Task.Run(async () => await first.DisposeAsync()));
+
+            await SendAsync(exchange, true, keyed);
+            Assert.That(counter.Calls, Is.InRange(0, 1));
+            var calls = counter.Calls;
+            await second.DisposeAsync();
+            await SendAsync(exchange, true, keyed);
+            Assert.That(counter.Calls, Is.EqualTo(calls));
+        }
+    }
+
     [TestCase(false, false)]
     [TestCase(false, true)]
     [TestCase(true, false)]
