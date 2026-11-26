@@ -1,0 +1,8 @@
+root = true
+
+[*.cs]
+dotnet_diagnostic.MA0048.severity = none
+
+[{Tests,Examples}/**/*.cs]
+dotnet_diagnostic.MA0004.severity = none
+dotnet_diagnostic.CA2007.severity = none
