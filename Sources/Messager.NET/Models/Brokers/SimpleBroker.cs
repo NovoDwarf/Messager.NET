@@ -13,7 +13,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
     private readonly Lock _locker = new();
 
     private Subscriber<TEvent>[] _handlers = [];
-    
+
     private readonly ILogger<SimpleBroker<TEvent>> _logger;
 
     public SimpleBroker(ILogger<SimpleBroker<TEvent>>? logger = null)
@@ -30,8 +30,22 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
     {
         var handlers = Volatile.Read(ref _handlers);
 
+        var hasDeadSubscriptions = false;
         foreach (var handler in handlers)
-            TryInvoke(handler, evt);
+        {
+            hasDeadSubscriptions |= !TryInvoke(handler, evt);
+        }
+
+        if (hasDeadSubscriptions)
+        {
+            lock (_locker)
+            {
+                var current = _handlers;
+                var live = Array.FindAll(current, static handler => handler.IsAlive);
+                if (live.Length != current.Length)
+                    Volatile.Write(ref _handlers, live);
+            }
+        }
     }
 
     public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference = SubscriptionReference.Strong)
@@ -67,10 +81,10 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
                 {
                     var updated = new Subscriber<TEvent>[current.Length - 1];
 
-                    if (index > 0) 
+                    if (index > 0)
                         Array.Copy(current, 0, updated, 0, index);
 
-                    if (index < updated.Length) 
+                    if (index < updated.Length)
                         Array.Copy(current, index + 1, updated, index, updated.Length - index);
 
                     Volatile.Write(ref _handlers, updated);
@@ -84,15 +98,16 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
         });
     }
 
-    private void TryInvoke(Subscriber<TEvent> subscription, TEvent evt)
+    private bool TryInvoke(Subscriber<TEvent> subscription, TEvent evt)
     {
         try
         {
-            subscription.Invoke(evt);
+            return subscription.Invoke(evt);
         }
         catch (Exception exception)
         {
             _logger.LogHandlerFailed(exception, BrokerType, EventType, Id);
+            return true;
         }
     }
 }
