@@ -10,7 +10,7 @@ public class ThroughputBenchmark
     private event EventHandler<int>? StandardEvent;
 
     private readonly List<IDisposable> _subscriptions = [];
-    
+
     private ISender<int> _sender = null!;
     private int _receivedCount;
 

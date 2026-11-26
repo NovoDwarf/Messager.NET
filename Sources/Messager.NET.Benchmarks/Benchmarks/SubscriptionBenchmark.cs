@@ -17,11 +17,11 @@ public class SubscriptionBenchmark
 	public void Setup()
 	{
 		var exchange = new Exchange();
-       
+
 		_receiver = exchange.GetReceiver<int>();
 		_handler = OnReceived;
 
-		for (var i = 0; i < ExistingSubscribers; i++) 
+		for (var i = 0; i < ExistingSubscribers; i++)
 			_receiver.Subscribe(_handler);
 	}
 
