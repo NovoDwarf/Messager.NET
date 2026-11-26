@@ -1,4 +1,3 @@
-﻿using Messager.NET.Extensions;
 using Messager.NET.Microsoft.DependencyInjection.Extensions;
 using Messager.NET.SimpleKeyed.Models.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,11 +12,10 @@ public static class Program
 		var builder = Host.CreateApplicationBuilder(args);
 		builder.Services.AddMessager();
 		builder.Services.AddSingleton<KeyedReceiverService>();
-		builder.Services.AddSingleton<KeyedSenderService>();
+		builder.Services.AddHostedService<KeyedSenderService>();
 
 		var app = builder.Build();
 		app.Services.GetRequiredService<KeyedReceiverService>();
-		app.Services.GetRequiredService<KeyedSenderService>();
 
 		return app.RunAsync();
 	}

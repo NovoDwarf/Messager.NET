@@ -1,6 +1,5 @@
-﻿using Messager.NET.Example.Models.Services;
-using Messager.NET.Extensions;
-using Messager.NET.Microsoft.DependencyInjection.Extensions;
+﻿using Messager.NET.Microsoft.DependencyInjection.Extensions;
+using Messager.NET.Simple.Models.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,11 +12,10 @@ public class Program
 		var builder = Host.CreateApplicationBuilder(args);
 		builder.Services.AddMessager();
 		builder.Services.AddSingleton<SimpleReceiverService>();
-		builder.Services.AddSingleton<SimpleSenderService>();
+		builder.Services.AddHostedService<SimpleSenderService>();
 
 		var app = builder.Build();
 		app.Services.GetRequiredService<SimpleReceiverService>();
-		app.Services.GetRequiredService<SimpleSenderService>();
 
 		return app.RunAsync();
 	}

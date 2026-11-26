@@ -1,7 +1,7 @@
 ﻿using Messager.NET.Example.Models.Events;
 using Messager.NET.Receivers;
 
-namespace Messager.NET.Example.Models.Services;
+namespace Messager.NET.Simple.Models.Services;
 
 public sealed class SimpleReceiverService : IDisposable
 {
@@ -12,7 +12,13 @@ public sealed class SimpleReceiverService : IDisposable
 		_subscription = receiver.Subscribe(OnMessageReceived);
 	}
 	
-	public void Dispose() => _subscription.Dispose();
+	public void Dispose()
+	{
+		_subscription.Dispose();
+	}
 
-	private static void OnMessageReceived(SimpleEvent evt) => Console.WriteLine($"Message received: {evt.Message}");
+	private static void OnMessageReceived(SimpleEvent evt)
+	{
+		Console.WriteLine($"Message received: {evt.Message}");
+	}
 }
