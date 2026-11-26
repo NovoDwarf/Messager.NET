@@ -33,7 +33,7 @@ public class ThroughputEqualityBenchmark
 	private StrongReferenceMessenger _strongMessenger = null!;
 	private WeakReferenceMessenger _weakMessenger = null!;
 
-	private MessagePipe.IPublisher<BenchmarkMessage> _pipePublisher = null!;
+	private IPublisher<BenchmarkMessage> _pipePublisher = null!;
 	private ServiceProvider _serviceProvider = null!;
 
 	private int _receivedCount;
@@ -60,18 +60,15 @@ public class ThroughputEqualityBenchmark
 		// MessagePipe
 		var services = new ServiceCollection();
 
-		services.AddMessagePipe(options =>
-		{
-			options.EnableAutoRegistration = false;
-		});
+		services.AddMessagePipe(options => options.EnableAutoRegistration = false);
 
 		_serviceProvider = services.BuildServiceProvider();
 
 		_pipePublisher = _serviceProvider
-			.GetRequiredService<MessagePipe.IPublisher<BenchmarkMessage>>();
+			.GetRequiredService<IPublisher<BenchmarkMessage>>();
 
 		var pipeSubscriber = _serviceProvider
-			.GetRequiredService<MessagePipe.ISubscriber<BenchmarkMessage>>();
+			.GetRequiredService<ISubscriber<BenchmarkMessage>>();
 
 		for (var i = 0; i < SubscriberCount; i++)
 		{
@@ -83,7 +80,7 @@ public class ThroughputEqualityBenchmark
 			var recipient = new BenchmarkRecipient(this);
 
 			_recipients.Add(recipient);
-			
+
 			_strongMessenger.Register<BenchmarkRecipient, BenchmarkMessage>(recipient, static (r, m) => r.Owner.OnReceived(m));
 			_weakMessenger.Register<BenchmarkRecipient, BenchmarkMessage>(recipient, static (r, m) => r.Owner.OnReceived(m));
 		}

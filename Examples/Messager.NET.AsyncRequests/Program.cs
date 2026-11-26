@@ -1,5 +1,4 @@
 ﻿using Messager.NET.AsyncRequests.Services;
-using Messager.NET.Extensions;
 using Messager.NET.Microsoft.DependencyInjection.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,13 +10,13 @@ public static class Program
 	public static Task Main(string[] args)
 	{
 		var builder = Host.CreateApplicationBuilder(args);
+
 		builder.Services.AddMessager(options => options.AddRequestsFromAssemblyOf(typeof(AsyncRequestService).Assembly));
-		builder.Services.AddSingleton<AsyncRequestService>();
-		builder.Services.AddSingleton<AsyncRequestWithInputService>();
+		builder.Services.AddHostedService<AsyncRequestService>();
+		builder.Services.AddHostedService<AsyncRequestWithInputService>();
 
 		var app = builder.Build();
-		app.Services.GetRequiredService<AsyncRequestService>();
-		app.Services.GetRequiredService<AsyncRequestWithInputService>();
+
 
 		return app.RunAsync();
 	}

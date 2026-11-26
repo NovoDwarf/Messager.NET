@@ -2,12 +2,12 @@ using Messager.NET.Queues;
 
 namespace Messager.NET.Queued;
 
-internal static class Program
+public static class Program
 {
-    private static async Task Main()
+    public static async Task Main()
     {
         await using var queue = new MessageQueue<WorkItem>(ProcessAsync, capacity: 2);
-        
+
         IMessageQueue<WorkItem> producer = queue;
 
         for (var i = 1; i <= 5; i++)

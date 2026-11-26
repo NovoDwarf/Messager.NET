@@ -1,23 +1,22 @@
-﻿using Messager.NET.Extensions;
-using Messager.NET.Microsoft.DependencyInjection.Extensions;
+﻿using Messager.NET.Microsoft.DependencyInjection.Extensions;
 using Messager.NET.Requests.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Messager.NET.Requests;
 
-public class Program
+public static class Program
 {
 	public static Task Main(string[] args)
 	{
 		var builder = Host.CreateApplicationBuilder(args);
+
 		builder.Services.AddMessager(options => options.AddRequestsFromAssemblyOf(typeof(SimpleRequestService).Assembly));
-		builder.Services.AddSingleton<SimpleRequestService>();
-		builder.Services.AddSingleton<SimpleRequestWithInputService>();
+		builder.Services.AddHostedService<SimpleRequestService>();
+		builder.Services.AddHostedService<SimpleRequestWithInputService>();
 
 		var app = builder.Build();
-		app.Services.GetRequiredService<SimpleRequestService>();
-		app.Services.GetRequiredService<SimpleRequestWithInputService>();
+
 
 		return app.RunAsync();
 	}

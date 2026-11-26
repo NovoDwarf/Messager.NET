@@ -1,23 +1,18 @@
-﻿using Messager.NET.AsyncKeyed.Models.Events;
+using Messager.NET.AsyncKeyed.Models.Events;
 using Messager.NET.Senders;
+using Microsoft.Extensions.Hosting;
 
 namespace Messager.NET.AsyncKeyed.Models.Services;
 
-public sealed class KeyedSenderService
+public sealed class KeyedSenderService(IAsyncSender<string, SimpleEvent> sender) : BackgroundService
 {
-	public KeyedSenderService(ISender<string, SimpleEvent> sender)
-	{
-		var cancellationToken = CancellationToken.None;
-		
-		Task.Run(() =>
-		{
-			while (!cancellationToken.IsCancellationRequested)
-			{
-				Thread.Sleep(1000);
-				
-				sender.Send("key", new SimpleEvent(Guid.NewGuid().ToString(), new ValueTask(Task.CompletedTask)));
-				sender.Send("another-key", new SimpleEvent(Guid.NewGuid().ToString(), new ValueTask(Task.CompletedTask)));
-			}
-		}, cancellationToken);
-	}
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+            await sender.SendAsync("key", new SimpleEvent(Guid.NewGuid().ToString(), ValueTask.CompletedTask));
+            await sender.SendAsync("another-key", new SimpleEvent(Guid.NewGuid().ToString(), ValueTask.CompletedTask));
+        }
+    }
 }

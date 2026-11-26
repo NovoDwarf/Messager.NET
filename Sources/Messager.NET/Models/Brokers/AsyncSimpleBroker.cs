@@ -30,8 +30,23 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
     {
         var handlers = Volatile.Read(ref _handlers);
 
+        var hasDeadSubscriptions = false;
         foreach (var handler in handlers)
+        {
+            hasDeadSubscriptions |= !handler.IsAlive;
             await TryInvokeAsync(handler, evt).ConfigureAwait(false);
+        }
+
+        if (hasDeadSubscriptions)
+        {
+            lock (_locker)
+            {
+                var current = _handlers;
+                var live = Array.FindAll(current, static handler => handler.IsAlive);
+                if (live.Length != current.Length)
+                    Volatile.Write(ref _handlers, live);
+            }
+        }
     }
 
     public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler, SubscriptionReference reference)
@@ -63,7 +78,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
                     removed = RemoveSubscription(target);
             }
 
-            if (removed) 
+            if (removed)
                 _logger.LogSubscriberRemoved(BrokerType, EventType, Id);
 
             return ValueTask.CompletedTask;
@@ -91,7 +106,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
             }
         }
 
-        if (removed) 
+        if (removed)
             _logger.LogSubscriberRemoved(BrokerType, EventType, Id);
     }
 
@@ -111,10 +126,10 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
     {
         var updated = new SubscriberAsync<TEvent>[current.Length - 1];
 
-        if (index > 0) 
+        if (index > 0)
             Array.Copy(current, 0, updated, 0, index);
 
-        if (index < updated.Length) 
+        if (index < updated.Length)
             Array.Copy(current, index + 1, updated, index, updated.Length - index);
 
         Volatile.Write(ref _handlers, updated);
@@ -132,4 +147,3 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
         }
     }
 }
-

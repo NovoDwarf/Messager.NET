@@ -1,6 +1,5 @@
 using BenchmarkDotNet.Attributes;
 using Messager.NET.Entities;
-using Messager.NET.Receivers;
 using Messager.NET.Senders;
 
 namespace Messager.NET.Benchmarks.Benchmarks;
@@ -30,14 +29,14 @@ public class AsyncThroughputBenchmark
 	{
 		_receivedCount = 0;
 
-		for (var i = 0; i < TotalMessages; i++) 
+		for (var i = 0; i < TotalMessages; i++)
 			await _sender.SendAsync(i).ConfigureAwait(false);
 
 		return _receivedCount;
 	}
 
 	[GlobalCleanup]
-	public async Task Cleanup() => await _subscription.DisposeAsync();
+	public async Task Cleanup() => await _subscription.DisposeAsync().ConfigureAwait(false);
 
 	private ValueTask OnReceivedAsync(int message)
 	{

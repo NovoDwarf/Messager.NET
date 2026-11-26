@@ -1,22 +1,29 @@
-﻿using Messager.NET.Requests;
+using Messager.NET.Requests;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Messager.NET.AsyncRequests.Services;
 
-public class AsyncRequestService
+public sealed class AsyncRequestService : BackgroundService
 {
-	public AsyncRequestService(IAsyncRequest<string> request)
-	{
-		var cancellationToken = CancellationToken.None;
-		
-		Task.Run(async () =>
-		{
-			while (!cancellationToken.IsCancellationRequested)
-			{
-				var result = await request.InvokeAsync();
-				
-				Console.WriteLine(result);
-				Thread.Sleep(1000);
-			}
-		}, cancellationToken);
-	}
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    public AsyncRequestService(IServiceScopeFactory scopeFactory)
+    {
+        _scopeFactory = scopeFactory;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            using var scope = _scopeFactory.CreateScope();
+
+            var request = scope.ServiceProvider.GetRequiredService<IAsyncRequest<string>>();
+            var result = await request.InvokeAsync();
+
+            Console.WriteLine(result);
+            await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+        }
+    }
 }

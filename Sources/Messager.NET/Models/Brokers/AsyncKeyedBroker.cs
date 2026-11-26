@@ -13,7 +13,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 {
     private readonly Dictionary<TKey, SubscriberAsync<TEvent>[]> _handlers = new();
     private readonly Lock _locker = new();
-    
+
     private readonly ILogger<AsyncKeyedBroker<TKey, TEvent>> _logger;
 
     public AsyncKeyedBroker(ILogger<AsyncKeyedBroker<TKey, TEvent>>? logger = null)
@@ -22,11 +22,11 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
     }
 
     public Guid Id { get; } = Guid.NewGuid();
-    
+
     public string BrokerType => typeof(AsyncKeyedBroker<,>).Name;
     public string KeyType => typeof(TKey).Name;
     public string EventType => typeof(TEvent).Name;
-    
+
     public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler, SubscriptionReference reference)
     {
         var subscription = new SubscriberAsync<TEvent>(handler, reference);
@@ -48,7 +48,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
             count = updated.Length;
         }
 
-        if (created) 
+        if (created)
             _logger.LogKeyedSubscriptionListCreated(BrokerType, KeyType, EventType, Id, key);
 
         _logger.LogKeyedSubscriberAdded(BrokerType, KeyType, EventType, Id, key, count);
@@ -97,8 +97,27 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
                 return;
         }
 
-        foreach (var handler in handlers) 
+        var hasDeadSubscriptions = false;
+        foreach (var handler in handlers)
+        {
+            hasDeadSubscriptions |= !handler.IsAlive;
             await TryInvokeAsync(handler, key, evt).ConfigureAwait(false);
+        }
+
+        if (hasDeadSubscriptions)
+        {
+            lock (_locker)
+            {
+                if (_handlers.TryGetValue(key, out var current))
+                {
+                    var live = Array.FindAll(current, static handler => handler.IsAlive);
+                    if (live.Length == 0)
+                        _handlers.Remove(key);
+                    else if (live.Length != current.Length)
+                        _handlers[key] = live;
+                }
+            }
+        }
     }
 
     private void RemoveSubscription(TKey key, SubscriberAsync<TEvent> subscription)
@@ -124,7 +143,8 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
         LogRemoval(key, removed, removedKey, remainingCount);
     }
 
-    private void RemoveAt(TKey key, SubscriberAsync<TEvent>[] current, int index, out bool removedKey, out int remainingCount)
+    private void RemoveAt(TKey key, SubscriberAsync<TEvent>[] current, int index, out bool removedKey,
+        out int remainingCount)
     {
         remainingCount = current.Length - 1;
         removedKey = remainingCount == 0;
@@ -137,10 +157,10 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 
         var updated = new SubscriberAsync<TEvent>[remainingCount];
 
-        if (index > 0) 
+        if (index > 0)
             Array.Copy(current, 0, updated, 0, index);
 
-        if (index < updated.Length) 
+        if (index < updated.Length)
             Array.Copy(current, index + 1, updated, index, updated.Length - index);
 
         _handlers[key] = updated;
@@ -148,10 +168,10 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 
     private void LogRemoval(TKey key, bool removed, bool removedKey, int remainingCount)
     {
-        if (removed) 
+        if (removed)
             _logger.LogKeyedSubscriberRemoved(BrokerType, KeyType, EventType, Id, key, remainingCount);
 
-        if (removedKey) 
+        if (removedKey)
             _logger.LogKeyedSubscriptionListRemoved(BrokerType, KeyType, EventType, Id, key);
     }
 

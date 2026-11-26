@@ -30,14 +30,14 @@ internal sealed class Subscriber<TEvent>
             : _weakHandler!.Matches(handler);
     }
 
-    internal void Invoke(TEvent evt)
+    internal bool Invoke(TEvent evt)
     {
         if (_strongHandler is not null)
         {
             _strongHandler(evt);
-            return;
+            return true;
         }
 
-        _weakHandler!.TryInvoke(evt);
+        return _weakHandler!.TryInvoke(evt);
     }
 }

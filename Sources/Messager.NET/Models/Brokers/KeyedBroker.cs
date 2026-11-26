@@ -8,7 +8,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
-public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IReceiver<TKey, TEvent> where TKey : notnull
+public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IReceiver<TKey, TEvent>
+    where TKey : notnull
 {
     private readonly Dictionary<TKey, Subscriber<TEvent>[]> _handlers = new();
     private readonly Lock _locker = new();
@@ -36,8 +37,26 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
                 return;
         }
 
+        var hasDeadSubscriptions = false;
         foreach (var subscriber in handlers)
-            TryInvoke(subscriber, evt);
+        {
+            hasDeadSubscriptions |= !TryInvoke(subscriber, evt);
+        }
+
+        if (hasDeadSubscriptions)
+        {
+            lock (_locker)
+            {
+                if (_handlers.TryGetValue(key, out var current))
+                {
+                    var live = Array.FindAll(current, static subscriber => subscriber.IsAlive);
+                    if (live.Length == 0)
+                        _handlers.Remove(key);
+                    else if (live.Length != current.Length)
+                        _handlers[key] = live;
+                }
+            }
+        }
     }
 
     public IDisposable Subscribe(TKey key, Action<TEvent> handler, SubscriptionReference reference)
@@ -59,7 +78,7 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
             _handlers[key] = updated;
         }
 
-        if (createdKey) 
+        if (createdKey)
             _logger.LogKeyedSubscriptionListCreated(BrokerType, KeyType, EventType, Id, key);
 
         _logger.LogKeyedSubscriberAdded(BrokerType, KeyType, EventType, Id, key, 1);
@@ -88,10 +107,10 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
                         {
                             var updated = new Subscriber<TEvent>[current.Length - 1];
 
-                            if (index > 0) 
+                            if (index > 0)
                                 Array.Copy(current, 0, updated, 0, index);
 
-                            if (index < updated.Length) 
+                            if (index < updated.Length)
                                 Array.Copy(current, index + 1, updated, index, updated.Length - index);
 
                             _handlers[key] = updated;
@@ -100,23 +119,24 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
                 }
             }
 
-            if (removed) 
+            if (removed)
                 _logger.LogKeyedSubscriberRemoved(BrokerType, KeyType, EventType, Id, key, 1);
 
-            if (removedKey) 
+            if (removedKey)
                 _logger.LogKeyedSubscriptionListRemoved(BrokerType, KeyType, EventType, Id, key);
         });
     }
 
-    private void TryInvoke(Subscriber<TEvent> subscriber, TEvent evt)
+    private bool TryInvoke(Subscriber<TEvent> subscriber, TEvent evt)
     {
         try
         {
-            subscriber.Invoke(evt);
+            return subscriber.Invoke(evt);
         }
         catch (Exception ex)
         {
             _logger.LogHandlerFailed(ex, BrokerType, EventType, Id);
+            return true;
         }
     }
 }

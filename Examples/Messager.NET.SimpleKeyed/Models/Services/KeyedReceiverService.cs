@@ -12,7 +12,13 @@ public sealed class KeyedReceiverService : IDisposable
 		_subscription = receiver.Subscribe("key", OnMessageReceived);
 	}
 	
-	public void Dispose() => _subscription.Dispose();
+	public void Dispose()
+	{
+		_subscription.Dispose();
+	}
 
-	private static void OnMessageReceived(SimpleEvent evt) => Console.WriteLine($"Message received: {evt.Message}");
+	private static void OnMessageReceived(SimpleEvent evt)
+	{
+		Console.WriteLine($"Message received: {evt.Message}");
+	}
 }
