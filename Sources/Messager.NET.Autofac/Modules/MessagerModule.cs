@@ -1,4 +1,5 @@
 using Autofac;
+using JetBrains.Annotations;
 using Messager.NET.Autofac.Factories;
 using Messager.NET.Entities;
 using Messager.NET.Factories;
@@ -12,15 +13,18 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Autofac.Modules;
 
+/// <summary>Registers Messager.NET services in Autofac.</summary>
 public sealed class MessagerModule : Module
 {
 	private readonly MessagerOptions _options = new();
 
-	public MessagerModule(Action<MessagerOptions>? configureOptions = null)
+	/// <summary>Creates a module with optional registration settings.</summary>
+	public MessagerModule([InstantHandle] Action<MessagerOptions>? configureOptions = null)
 	{
 		configureOptions?.Invoke(_options);
 	}
-    
+
+	/// <inheritdoc />
 	protected override void Load(ContainerBuilder builder)
 	{
 		builder.RegisterInstance(_options)
