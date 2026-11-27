@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <ProjectTargetFrameworks>net10.0;net11.0</ProjectTargetFrameworks>
-        <Version>2.0.0</Version>
+        <Version>2.1.0</Version>
         <ProjectAuthors>NovoDwarf</ProjectAuthors>
         <ProjectCopyright>NovoDwarf</ProjectCopyright>
         <ProjectRepositoryUrl>https://github.com/NovoDwarf/Messager.NET</ProjectRepositoryUrl>
