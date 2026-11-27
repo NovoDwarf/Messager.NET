@@ -1,4 +1,5 @@
 using System.Reflection;
+using JetBrains.Annotations;
 using Messager.NET.Entities;
 using Messager.NET.Factories;
 using Messager.NET.Microsoft.DependencyInjection.Factories;
@@ -14,13 +15,19 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Microsoft.DependencyInjection.Extensions;
 
+/// <summary>Provides Messager.NET registration for Microsoft dependency injection.</summary>
 public static class ServiceCollectionExtensions
 {
-	public static IServiceCollection AddMessager(this IServiceCollection services, Action<MessagerOptions>? configureOptions = null)
+	/// <summary>Registers Messager.NET services with the container.</summary>
+	/// <param name="services">The container registration target.</param>
+	/// <param name="configureOptions">An optional callback that configures the registrations.</param>
+	/// <returns>The registration target.</returns>
+	public static IServiceCollection AddMessager(this IServiceCollection services,
+		[InstantHandle] Action<MessagerOptions>? configureOptions = null)
 	{
 		if (services.Any(x => x.ServiceType == typeof(MessagerOptions)))
 			throw new InvalidOperationException("Messager.NET is already registered.");
-		
+
 		var options = new MessagerOptions();
 
 		configureOptions?.Invoke(options);
@@ -40,7 +47,7 @@ public static class ServiceCollectionExtensions
 
 		services.TryAddSingleton<IBrokerFactory>(sp => sp.GetRequiredService<Exchange>());
 		services.TryAddSingleton<IKeyedBrokerFactory>(sp => sp.GetRequiredService<Exchange>());
-		
+
 		AddPubSubRegistrations(services);
 		AddRequestRegistrations(services, options.RequestAssemblies);
 
@@ -68,7 +75,8 @@ public static class ServiceCollectionExtensions
 		{
 			var requestTypes = assembly
 			                   .GetTypes()
-			                   .Where(type => type is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(type));
+			                   .Where(type =>
+				                   type is { IsAbstract: false, IsClass: true } && ResolveHelper.IsRequestType(type));
 
 			foreach (var type in requestTypes)
 			{
