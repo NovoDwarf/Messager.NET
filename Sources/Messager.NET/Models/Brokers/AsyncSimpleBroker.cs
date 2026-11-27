@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
+/// <summary>Dispatches asynchronous events to registered subscribers.</summary>
 public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IAsyncReceiver<TEvent>
 {
 	private readonly Lock _locker = new();
@@ -17,16 +18,21 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
 
 	private readonly ILogger<AsyncSimpleBroker<TEvent>> _logger;
 
+	/// <summary>Creates a broker with an optional logger.</summary>
 	public AsyncSimpleBroker(ILogger<AsyncSimpleBroker<TEvent>>? logger = null)
 	{
 		_logger = logger ?? NullLogger<AsyncSimpleBroker<TEvent>>.Instance;
 	}
 
+	/// <summary>Gets the unique identifier of this broker.</summary>
 	public Guid Id { get; } = Guid.NewGuid();
 
+	/// <summary>Gets the broker type name used in diagnostics.</summary>
 	public string BrokerType => typeof(AsyncSimpleBroker<>).Name;
+	/// <summary>Gets the event type name used in diagnostics.</summary>
 	public string EventType => typeof(TEvent).Name;
 
+	/// <inheritdoc />
 	public async ValueTask SendAsync(TEvent evt)
 	{
 		var handlers = Volatile.Read(ref _handlers);
@@ -51,6 +57,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
         }
     }
 
+	/// <inheritdoc />
 	public IAsyncDisposable Subscribe(Func<TEvent, ValueTask> handler, SubscriptionReference reference = SubscriptionReference.Strong)
 	{
 		var subscription = new SubscriberAsync<TEvent>(handler, reference);
@@ -89,6 +96,7 @@ public class AsyncSimpleBroker<TEvent> : ISimpleBroker, IAsyncSender<TEvent>, IA
 		});
 	}
 
+	/// <inheritdoc />
 	public void Unsubscribe(Func<TEvent, ValueTask> handler)
 	{
 		ArgumentNullException.ThrowIfNull(handler);

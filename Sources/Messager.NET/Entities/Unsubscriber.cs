@@ -13,6 +13,8 @@ public sealed class Unsubscriber : IDisposable
 {
 	private Action? _unsubscribe;
 
+	/// <summary>Creates a handle that invokes the supplied action when disposed.</summary>
+	/// <param name="unsubscribe">The action used to remove the subscription.</param>
 	public Unsubscriber(Action unsubscribe)
 	{
 		ArgumentNullException.ThrowIfNull(unsubscribe);

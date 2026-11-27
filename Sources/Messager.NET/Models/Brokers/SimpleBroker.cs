@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
+/// <summary>Dispatches events to registered subscribers.</summary>
 public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TEvent>
 {
 	private readonly Lock _locker = new();
@@ -17,16 +18,21 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
 
 	private readonly ILogger<SimpleBroker<TEvent>> _logger;
 
+	/// <summary>Creates a broker with an optional logger.</summary>
 	public SimpleBroker(ILogger<SimpleBroker<TEvent>>? logger = null)
 	{
 		_logger = logger ?? NullLogger<SimpleBroker<TEvent>>.Instance;
 	}
 
+	/// <summary>Gets the unique identifier of this broker.</summary>
 	public Guid Id { get; } = Guid.NewGuid();
 
+	/// <summary>Gets the broker type name used in diagnostics.</summary>
 	public string BrokerType => typeof(SimpleBroker<>).Name;
+	/// <summary>Gets the event type name used in diagnostics.</summary>
 	public string EventType => typeof(TEvent).Name;
 
+	/// <inheritdoc />
 	public void Send(TEvent evt)
 	{
 		var handlers = Volatile.Read(ref _handlers);
@@ -49,6 +55,7 @@ public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TE
 		}
 	}
 
+	/// <inheritdoc />
 	public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference = SubscriptionReference.Strong)
 	{
 		var subscription = new Subscriber<TEvent>(

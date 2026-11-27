@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
+/// <summary>Dispatches keyed events to registered subscribers.</summary>
 public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IReceiver<TKey, TEvent>
 	where TKey : notnull
 {
@@ -17,17 +18,23 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
 
 	private readonly ILogger<KeyedBroker<TKey, TEvent>> _logger;
 
+	/// <summary>Creates a broker with an optional logger.</summary>
 	public KeyedBroker(ILogger<KeyedBroker<TKey, TEvent>>? logger = null)
 	{
 		_logger = logger ?? NullLogger<KeyedBroker<TKey, TEvent>>.Instance;
 	}
 
+	/// <summary>Gets the unique identifier of this broker.</summary>
 	public Guid Id { get; } = Guid.NewGuid();
 
+	/// <summary>Gets the broker type name used in diagnostics.</summary>
 	public string BrokerType => typeof(KeyedBroker<,>).Name;
+	/// <summary>Gets the routing key type name used in diagnostics.</summary>
 	public string KeyType => typeof(TKey).Name;
+	/// <summary>Gets the event type name used in diagnostics.</summary>
 	public string EventType => typeof(TEvent).Name;
 
+	/// <inheritdoc />
 	public void Send(TKey key, TEvent evt)
 	{
 		Subscriber<TEvent>[] handlers;
@@ -59,6 +66,7 @@ public class KeyedBroker<TKey, TEvent> : IKeyedBroker, ISender<TKey, TEvent>, IR
 		}
 	}
 
+	/// <inheritdoc />
 	public IDisposable Subscribe(TKey key, Action<TEvent> handler, SubscriptionReference reference = SubscriptionReference.Strong)
 	{
 		var subscription = new Subscriber<TEvent>(handler, reference);

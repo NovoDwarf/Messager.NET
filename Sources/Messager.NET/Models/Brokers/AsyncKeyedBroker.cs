@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET.Models.Brokers;
 
+/// <summary>Dispatches asynchronous keyed events to registered subscribers.</summary>
 public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, TEvent>, IAsyncReceiver<TKey, TEvent>
 	where TKey : notnull
 {
@@ -17,17 +18,23 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 
 	private readonly ILogger<AsyncKeyedBroker<TKey, TEvent>> _logger;
 
+	/// <summary>Creates a broker with an optional logger.</summary>
 	public AsyncKeyedBroker(ILogger<AsyncKeyedBroker<TKey, TEvent>>? logger = null)
 	{
 		_logger = logger ?? NullLogger<AsyncKeyedBroker<TKey, TEvent>>.Instance;
 	}
 
+	/// <summary>Gets the unique identifier of this broker.</summary>
 	public Guid Id { get; } = Guid.NewGuid();
 
+	/// <summary>Gets the broker type name used in diagnostics.</summary>
 	public string BrokerType => typeof(AsyncKeyedBroker<,>).Name;
+	/// <summary>Gets the routing key type name used in diagnostics.</summary>
 	public string KeyType => typeof(TKey).Name;
+	/// <summary>Gets the event type name used in diagnostics.</summary>
 	public string EventType => typeof(TEvent).Name;
 
+	/// <inheritdoc />
 	public IAsyncDisposable Subscribe(TKey key, Func<TEvent, ValueTask> handler, SubscriptionReference reference = SubscriptionReference.Strong)
 	{
 		var subscription = new SubscriberAsync<TEvent>(handler, reference);
@@ -63,6 +70,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 		});
 	}
 
+	/// <inheritdoc />
 	public void Unsubscribe(TKey key, Func<TEvent, ValueTask> handler)
 	{
 		ArgumentNullException.ThrowIfNull(handler);
@@ -88,6 +96,7 @@ public class AsyncKeyedBroker<TKey, TEvent> : IKeyedBroker, IAsyncSender<TKey, T
 		LogRemoval(key, removed, removedKey, remainingCount);
 	}
 
+	/// <inheritdoc />
 	public async ValueTask SendAsync(TKey key, TEvent evt)
 	{
 		SubscriberAsync<TEvent>[]? handlers;

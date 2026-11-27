@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Messager.NET;
 
+/// <summary>Configures dependency injection registrations for Messager.NET.</summary>
 public class MessagerOptions
 {
 	/// <summary>
@@ -15,8 +16,11 @@ public class MessagerOptions
 	/// </summary>
 	public bool UseGlobal { get; set; } = false;
 
+	/// <summary>Gets the assemblies scanned for request handler registrations.</summary>
 	public ISet<Assembly> RequestAssemblies { get; } = new HashSet<Assembly>();
 
+	/// <summary>Adds an assembly to the request handler scan.</summary>
+	/// <param name="assembly">The assembly to scan during registration.</param>
 	public void AddRequestsFromAssemblyOf(Assembly assembly)
 	{
 		RequestAssemblies.Add(assembly);
