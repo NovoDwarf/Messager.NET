@@ -25,6 +25,7 @@
         <PackageReleaseNotes>See $(ProjectRepositoryUrl)/blob/master/CHANGELOG.md for release notes and breaking changes.</PackageReleaseNotes>
         <Product>Messager.NET</Product>
         <DebugType>portable</DebugType>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
 
