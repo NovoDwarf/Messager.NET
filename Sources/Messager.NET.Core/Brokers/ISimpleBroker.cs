@@ -1,22 +1,22 @@
 namespace Messager.NET.Brokers;
 
 /// <summary>
-/// Internal metadata shared by broker implementations.
+///     Internal metadata shared by broker implementations.
 /// </summary>
 internal interface ISimpleBroker
 {
 	/// <summary>
-	/// Unique identifier of the broker instance.
+	///     Unique identifier of the broker instance.
 	/// </summary>
 	public Guid Id { get; }
 
 	/// <summary>
-	/// Runtime broker type name used in diagnostics.
+	///     Runtime broker type name used in diagnostics.
 	/// </summary>
 	public string BrokerType { get; }
 
 	/// <summary>
-	/// Event type name handled by the broker.
+	///     Event type name handled by the broker.
 	/// </summary>
 	public string EventType { get; }
 }
