@@ -1,3 +1,4 @@
+using Messager.NET.Enums;
 using Messager.NET.Factories;
 using Messager.NET.Receivers;
 

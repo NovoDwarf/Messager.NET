@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using Messager.NET.Entities;
-using Messager.NET.Receivers;
+using Messager.NET.Enums;
 using Messager.NET.Senders;
 
 namespace Messager.NET.Benchmarks.Benchmarks;

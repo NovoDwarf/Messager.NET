@@ -1,5 +1,6 @@
-﻿using Messager.NET.Brokers;
+using Messager.NET.Brokers;
 using Messager.NET.Entities;
+using Messager.NET.Enums;
 using Messager.NET.Extensions;
 using Messager.NET.Receivers;
 using Messager.NET.Senders;

@@ -1,4 +1,4 @@
-using Messager.NET.Receivers;
+using Messager.NET.Enums;
 
 namespace Messager.NET.Entities;
 

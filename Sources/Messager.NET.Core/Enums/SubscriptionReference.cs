@@ -1,4 +1,4 @@
-namespace Messager.NET.Receivers;
+namespace Messager.NET.Enums;
 
 /// <summary>
 ///     Controls whether a subscription keeps callback targets alive.

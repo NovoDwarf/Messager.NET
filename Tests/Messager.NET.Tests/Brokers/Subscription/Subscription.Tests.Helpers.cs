@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Messager.NET.Entities;
+using Messager.NET.Enums;
 using Messager.NET.Receivers;
 
 namespace Messager.NET.Tests.Brokers.Subscription;

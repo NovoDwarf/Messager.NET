@@ -1,3 +1,4 @@
+using Messager.NET.Enums;
 using Messager.NET.Microsoft.DependencyInjection.Extensions;
 using Messager.NET.Receivers;
 using Microsoft.Extensions.DependencyInjection;
