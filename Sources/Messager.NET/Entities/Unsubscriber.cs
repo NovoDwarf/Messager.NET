@@ -11,26 +11,26 @@
 /// </remarks>
 public sealed class Unsubscriber : IDisposable
 {
-    private Action? _unsubscribe;
+	private Action? _unsubscribe;
 
-    public Unsubscriber(Action unsubscribe)
-    {
-        ArgumentNullException.ThrowIfNull(unsubscribe);
-        
-        _unsubscribe = unsubscribe;
-    }
+	public Unsubscriber(Action unsubscribe)
+	{
+		ArgumentNullException.ThrowIfNull(unsubscribe);
 
-    /// <summary>
-    /// Gets whether unsubscription has been initiated.
-    /// </summary>
-    public bool IsDisposed => Volatile.Read(ref _unsubscribe) is null;
+		_unsubscribe = unsubscribe;
+	}
 
-    /// <summary>
-    /// Executes the unsubscribe action at most once.
-    /// Thread-safe and idempotent.
-    /// </summary>
-    public void Dispose()
-    {
-        Interlocked.Exchange(ref _unsubscribe, null)?.Invoke();
-    }
+	/// <summary>
+	/// Gets whether unsubscription has been initiated.
+	/// </summary>
+	public bool IsDisposed => Volatile.Read(ref _unsubscribe) is null;
+
+	/// <summary>
+	/// Executes the unsubscribe action at most once.
+	/// Thread-safe and idempotent.
+	/// </summary>
+	public void Dispose()
+	{
+		Interlocked.Exchange(ref _unsubscribe, value: null)?.Invoke();
+	}
 }

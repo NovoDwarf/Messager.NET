@@ -14,8 +14,7 @@ public class MessagerOptions
 	/// Use global instance in DI container. Currently, instance initialized with <see cref="NullLoggerFactory.Instance"/>
 	/// </summary>
 	public bool UseGlobal { get; set; } = false;
-	
-	
+
 	public ISet<Assembly> RequestAssemblies { get; } = new HashSet<Assembly>();
 
 	public void AddRequestsFromAssemblyOf(Assembly assembly)

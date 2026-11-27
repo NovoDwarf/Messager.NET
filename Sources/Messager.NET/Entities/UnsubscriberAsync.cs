@@ -11,47 +11,47 @@ namespace Messager.NET.Entities;
 /// </remarks>
 public sealed class UnsubscriberAsync : IAsyncDisposable
 {
-    private Func<ValueTask>? _unsubscribe;
+	private Func<ValueTask>? _unsubscribe;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UnsubscriberAsync"/> class
-    /// with the specified unsubscribe function.
-    /// </summary>
-    /// <param name="unsubscribe">
-    /// The asynchronous function to execute when disposing.
-    /// This function should contain the unsubscription logic.
-    /// Must not be null.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="unsubscribe"/> is null.
-    /// </exception>
-    public UnsubscriberAsync(Func<ValueTask> unsubscribe)
-    {
-        ArgumentNullException.ThrowIfNull(unsubscribe);
-        _unsubscribe = unsubscribe;
-    }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="UnsubscriberAsync"/> class
+	/// with the specified unsubscribe function.
+	/// </summary>
+	/// <param name="unsubscribe">
+	/// The asynchronous function to execute when disposing.
+	/// This function should contain the unsubscription logic.
+	/// Must not be null.
+	/// </param>
+	/// <exception cref="ArgumentNullException">
+	/// Thrown when <paramref name="unsubscribe"/> is null.
+	/// </exception>
+	public UnsubscriberAsync(Func<ValueTask> unsubscribe)
+	{
+		ArgumentNullException.ThrowIfNull(unsubscribe);
+		_unsubscribe = unsubscribe;
+	}
 
-    /// <summary>
-    /// Gets a value indicating whether the unsubscription has been performed.
-    /// </summary>
-    public bool IsDisposed => Volatile.Read(ref _unsubscribe) is null;
+	/// <summary>
+	/// Gets a value indicating whether the unsubscription has been performed.
+	/// </summary>
+	public bool IsDisposed => Volatile.Read(ref _unsubscribe) is null;
 
-    /// <summary>
-    /// Asynchronously executes the unsubscribe operation if it hasn't been performed already.
-    /// </summary>
-    /// <remarks>
-    /// This method is thread-safe and idempotent. The first call to this method
-    /// will execute the unsubscribe function, and any subsequent calls will be ignored.
-    /// The method uses interlocked operations to ensure thread safety.
-    /// </remarks>
-    /// <returns>
-    /// A <see cref="ValueTask"/> that represents the asynchronous unsubscription operation.
-    /// </returns>
-    public async ValueTask DisposeAsync()
-    {
-        var unsubscribe = Interlocked.Exchange(ref _unsubscribe, null);
+	/// <summary>
+	/// Asynchronously executes the unsubscribe operation if it hasn't been performed already.
+	/// </summary>
+	/// <remarks>
+	/// This method is thread-safe and idempotent. The first call to this method
+	/// will execute the unsubscribe function, and any subsequent calls will be ignored.
+	/// The method uses interlocked operations to ensure thread safety.
+	/// </remarks>
+	/// <returns>
+	/// A <see cref="ValueTask"/> that represents the asynchronous unsubscription operation.
+	/// </returns>
+	public async ValueTask DisposeAsync()
+	{
+		var unsubscribe = Interlocked.Exchange(ref _unsubscribe, value: null);
 
-        if (unsubscribe is not null)
-            await unsubscribe().ConfigureAwait(false);
-    }
+		if (unsubscribe is not null)
+			await unsubscribe().ConfigureAwait(false);
+	}
 }

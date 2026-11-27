@@ -10,104 +10,101 @@ namespace Messager.NET.Models.Brokers;
 
 public class SimpleBroker<TEvent> : ISimpleBroker, ISender<TEvent>, IReceiver<TEvent>
 {
-    private readonly Lock _locker = new();
+	private readonly Lock _locker = new();
 
-    private Subscriber<TEvent>[] _handlers = [];
+	private Subscriber<TEvent>[] _handlers = [];
 
-    private readonly ILogger<SimpleBroker<TEvent>> _logger;
+	private readonly ILogger<SimpleBroker<TEvent>> _logger;
 
-    public SimpleBroker(ILogger<SimpleBroker<TEvent>>? logger = null)
-    {
-        _logger = logger ?? NullLogger<SimpleBroker<TEvent>>.Instance;
-    }
+	public SimpleBroker(ILogger<SimpleBroker<TEvent>>? logger = null)
+	{
+		_logger = logger ?? NullLogger<SimpleBroker<TEvent>>.Instance;
+	}
 
-    public Guid Id { get; } = Guid.NewGuid();
+	public Guid Id { get; } = Guid.NewGuid();
 
-    public string BrokerType => typeof(SimpleBroker<>).Name;
-    public string EventType => typeof(TEvent).Name;
+	public string BrokerType => typeof(SimpleBroker<>).Name;
+	public string EventType => typeof(TEvent).Name;
 
-    public void Send(TEvent evt)
-    {
-        var handlers = Volatile.Read(ref _handlers);
+	public void Send(TEvent evt)
+	{
+		var handlers = Volatile.Read(ref _handlers);
 
-        var hasDeadSubscriptions = false;
-        foreach (var handler in handlers)
-        {
-            hasDeadSubscriptions |= !TryInvoke(handler, evt);
-        }
+		var hasDeadSubscriptions = false;
 
-        if (hasDeadSubscriptions)
-        {
-            lock (_locker)
-            {
-                var current = _handlers;
-                var live = Array.FindAll(current, static handler => handler.IsAlive);
-                if (live.Length != current.Length)
-                    Volatile.Write(ref _handlers, live);
-            }
-        }
-    }
+		foreach (var handler in handlers)
+			hasDeadSubscriptions |= !TryInvoke(handler, evt);
 
-    public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference = SubscriptionReference.Strong)
-    {
-        var subscription = new Subscriber<TEvent>(
-            handler, reference);
+		if (!hasDeadSubscriptions)
+			return;
 
-        lock (_locker)
-        {
-            var current = _handlers;
-            var updated = new Subscriber<TEvent>[current.Length + 1];
+		lock (_locker)
+		{
+			var current = _handlers;
+			var live = Array.FindAll(current, static handler => handler.IsAlive);
 
-            Array.Copy(current, updated, current.Length);
-            updated[^1] = subscription;
+			if (live.Length != current.Length)
+				Volatile.Write(ref _handlers, live);
+		}
+	}
 
-            Volatile.Write(ref _handlers, updated);
-        }
+	public IDisposable Subscribe(Action<TEvent> handler, SubscriptionReference reference = SubscriptionReference.Strong)
+	{
+		var subscription = new Subscriber<TEvent>(
+			handler, reference);
 
-        _logger.LogSubscriberAdded(BrokerType, EventType, Id);
+		lock (_locker)
+		{
+			var current = _handlers;
+			var updated = new Subscriber<TEvent>[current.Length + 1];
 
-        return new Unsubscriber(() =>
-        {
-            bool removed;
+			Array.Copy(current, updated, current.Length);
+			updated[^1] = subscription;
 
-            lock (_locker)
-            {
-                var current = _handlers;
-                var index = Array.IndexOf(current, subscription);
+			Volatile.Write(ref _handlers, updated);
+		}
 
-                removed = index >= 0;
+		_logger.LogSubscriberAdded(BrokerType, EventType, Id);
 
-                if (removed)
-                {
-                    var updated = new Subscriber<TEvent>[current.Length - 1];
+		return new Unsubscriber(() =>
+		{
+			bool removed;
 
-                    if (index > 0)
-                        Array.Copy(current, 0, updated, 0, index);
+			lock (_locker)
+			{
+				var current = _handlers;
+				var index = Array.IndexOf(current, subscription);
 
-                    if (index < updated.Length)
-                        Array.Copy(current, index + 1, updated, index, updated.Length - index);
+				removed = index >= 0;
 
-                    Volatile.Write(ref _handlers, updated);
-                }
-            }
+				if (removed)
+				{
+					var updated = new Subscriber<TEvent>[current.Length - 1];
 
-            if (removed)
-            {
-                _logger.LogSubscriberRemoved(BrokerType, EventType, Id);
-            }
-        });
-    }
+					if (index > 0)
+						Array.Copy(current, 0, updated, 0, index);
 
-    private bool TryInvoke(Subscriber<TEvent> subscription, TEvent evt)
-    {
-        try
-        {
-            return subscription.Invoke(evt);
-        }
-        catch (Exception exception)
-        {
-            _logger.LogHandlerFailed(exception, BrokerType, EventType, Id);
-            return true;
-        }
-    }
+					if (index < updated.Length)
+						Array.Copy(current, index + 1, updated, index, updated.Length - index);
+
+					Volatile.Write(ref _handlers, updated);
+				}
+			}
+
+			if (removed) _logger.LogSubscriberRemoved(BrokerType, EventType, Id);
+		});
+	}
+
+	private bool TryInvoke(Subscriber<TEvent> subscription, TEvent evt)
+	{
+		try
+		{
+			return subscription.Invoke(evt);
+		}
+		catch (Exception exception)
+		{
+			_logger.LogHandlerFailed(exception, BrokerType, EventType, Id);
+			return true;
+		}
+	}
 }

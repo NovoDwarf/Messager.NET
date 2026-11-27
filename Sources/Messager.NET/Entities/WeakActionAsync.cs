@@ -17,19 +17,7 @@ internal sealed class WeakActionAsync<T>
 			_invocations[i] = new Invocation(callbacks[i]);
 	}
 
-	internal bool IsAlive
-	{
-		get
-		{
-			foreach (var invocation in _invocations)
-			{
-				if (invocation.IsAlive)
-					return true;
-			}
-
-			return false;
-		}
-	}
+	internal bool IsAlive => _invocations.Any(invocation => invocation.IsAlive);
 
 	internal bool Matches(Func<T, ValueTask> handler)
 	{
@@ -41,20 +29,17 @@ internal sealed class WeakActionAsync<T>
 			return false;
 
 		for (var i = 0; i < callbacks.Length; i++)
-		{
-			if (!_invocations[i].Matches(callbacks[i]))
+        {
+            if (!_invocations[i].Matches(callbacks[i]))
 				return false;
-		}
+        }
 
-		return true;
+        return true;
 	}
 
 	internal async ValueTask InvokeAsync(T arg)
 	{
-		foreach (var invocation in _invocations)
-		{
-			await invocation.InvokeAsync(arg).ConfigureAwait(false);
-		}
+		foreach (var invocation in _invocations) await invocation.InvokeAsync(arg).ConfigureAwait(false);
 	}
 
 	private sealed class Invocation
@@ -85,7 +70,10 @@ internal sealed class WeakActionAsync<T>
 
 		internal bool IsAlive => _invocation.IsAlive;
 
-		internal bool Matches(Delegate callback) => _invocation.Matches(callback);
+		internal bool Matches(Delegate callback)
+		{
+			return _invocation.Matches(callback);
+		}
 
 		internal ValueTask InvokeAsync(T arg)
 		{

@@ -9,40 +9,69 @@ namespace Messager.NET.Entities;
 
 public sealed class Exchange : IBrokerFactory, IKeyedBrokerFactory
 {
-    private static readonly Lazy<Exchange> GlobalInstance = new(() => new Exchange(), LazyThreadSafetyMode.ExecutionAndPublication);
-    
-    private readonly SimpleBrokerRegistry _simpleBrokers;
-    private readonly KeyedBrokerRegistry _keyedBrokers;
-    
-    private readonly AsyncSimpleBrokerRegistry _asyncSimpleBrokers;
-    private readonly AsyncKeyedBrokerRegistry _asyncKeyedBrokers;
-    
-    public Exchange() : this(NullLoggerFactory.Instance)
-    {
-    }
+	private static readonly Lazy<Exchange> GlobalInstance =
+		new(() => new Exchange(), LazyThreadSafetyMode.ExecutionAndPublication);
 
-    public Exchange(ILoggerFactory? loggerFactory)
-    {
-        loggerFactory ??= NullLoggerFactory.Instance;
-        
-        _simpleBrokers = new SimpleBrokerRegistry(loggerFactory);
-        _keyedBrokers = new KeyedBrokerRegistry(loggerFactory);
-        
-        _asyncSimpleBrokers = new AsyncSimpleBrokerRegistry(loggerFactory);
-        _asyncKeyedBrokers = new AsyncKeyedBrokerRegistry(loggerFactory);
-    }
+	private readonly SimpleBrokerRegistry _simpleBrokers;
+	private readonly KeyedBrokerRegistry _keyedBrokers;
 
-    public static Exchange Default => GlobalInstance.Value;
+	private readonly AsyncSimpleBrokerRegistry _asyncSimpleBrokers;
+	private readonly AsyncKeyedBrokerRegistry _asyncKeyedBrokers;
 
-    public ISender<TEvent> GetSender<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();
-    public IReceiver<TEvent> GetReceiver<TEvent>() => _simpleBrokers.GetOrCreate<TEvent>();
+	public Exchange() : this(NullLoggerFactory.Instance)
+	{
+	}
 
-    public IAsyncSender<TEvent> GetAsyncSender<TEvent>() => _asyncSimpleBrokers.GetOrCreate<TEvent>();
-    public IAsyncReceiver<TEvent> GetAsyncReceiver<TEvent>() => _asyncSimpleBrokers.GetOrCreate<TEvent>();
-    
-    public ISender<TKey, TEvent> GetKeyedSender<TKey, TEvent>() where TKey : notnull => _keyedBrokers.GetOrCreate<TKey, TEvent>();
-    public IReceiver<TKey, TEvent> GetKeyedReceiver<TKey, TEvent>() where TKey : notnull => _keyedBrokers.GetOrCreate<TKey, TEvent>();
-    
-    public IAsyncSender<TKey, TEvent> GetAsyncKeyedSender<TKey, TEvent>() where TKey : notnull => _asyncKeyedBrokers.GetOrCreate<TKey, TEvent>();
-    public IAsyncReceiver<TKey, TEvent> GetAsyncKeyedReceiver<TKey, TEvent>() where TKey : notnull => _asyncKeyedBrokers.GetOrCreate<TKey, TEvent>();
+	public Exchange(ILoggerFactory? loggerFactory)
+	{
+		loggerFactory ??= NullLoggerFactory.Instance;
+
+		_simpleBrokers = new SimpleBrokerRegistry(loggerFactory);
+		_keyedBrokers = new KeyedBrokerRegistry(loggerFactory);
+
+		_asyncSimpleBrokers = new AsyncSimpleBrokerRegistry(loggerFactory);
+		_asyncKeyedBrokers = new AsyncKeyedBrokerRegistry(loggerFactory);
+	}
+
+	public static Exchange Default => GlobalInstance.Value;
+
+	public ISender<TEvent> GetSender<TEvent>()
+	{
+		return _simpleBrokers.GetOrCreate<TEvent>();
+	}
+
+	public IReceiver<TEvent> GetReceiver<TEvent>()
+	{
+		return _simpleBrokers.GetOrCreate<TEvent>();
+	}
+
+	public IAsyncSender<TEvent> GetAsyncSender<TEvent>()
+	{
+		return _asyncSimpleBrokers.GetOrCreate<TEvent>();
+	}
+
+	public IAsyncReceiver<TEvent> GetAsyncReceiver<TEvent>()
+	{
+		return _asyncSimpleBrokers.GetOrCreate<TEvent>();
+	}
+
+	public ISender<TKey, TEvent> GetKeyedSender<TKey, TEvent>() where TKey : notnull
+	{
+		return _keyedBrokers.GetOrCreate<TKey, TEvent>();
+	}
+
+	public IReceiver<TKey, TEvent> GetKeyedReceiver<TKey, TEvent>() where TKey : notnull
+	{
+		return _keyedBrokers.GetOrCreate<TKey, TEvent>();
+	}
+
+	public IAsyncSender<TKey, TEvent> GetAsyncKeyedSender<TKey, TEvent>() where TKey : notnull
+	{
+		return _asyncKeyedBrokers.GetOrCreate<TKey, TEvent>();
+	}
+
+	public IAsyncReceiver<TKey, TEvent> GetAsyncKeyedReceiver<TKey, TEvent>() where TKey : notnull
+	{
+		return _asyncKeyedBrokers.GetOrCreate<TKey, TEvent>();
+	}
 }
