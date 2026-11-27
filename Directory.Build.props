@@ -24,6 +24,8 @@
         <PackageTags>messaging;pubsub;events;dependency-injection;dotnet</PackageTags>
         <PackageReleaseNotes>See $(ProjectRepositoryUrl)/blob/master/CHANGELOG.md for release notes and breaking changes.</PackageReleaseNotes>
         <Product>Messager.NET</Product>
+        <DebugType>portable</DebugType>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Core' Or '$(MSBuildProjectName)' == 'Messager.NET' Or '$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection' Or '$(MSBuildProjectName)' == 'Messager.NET.Autofac'">
