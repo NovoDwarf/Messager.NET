@@ -4,12 +4,12 @@
         <TargetFrameworks>$(ProjectTargetFrameworks)</TargetFrameworks>
         <RootNamespace>Messager.NET</RootNamespace>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>Messager.NET</_Parameter1>
         </AssemblyAttribute>
-        
+
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>Messager.NET.Tests</_Parameter1>
         </AssemblyAttribute>

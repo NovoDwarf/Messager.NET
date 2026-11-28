@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Messager.NET.Enums;
 using Messager.NET.Models.Brokers;
 using Messager.NET.Receivers;
 using static Messager.NET.Tests.Helpers.TestHelpers;

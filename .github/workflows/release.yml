@@ -2,7 +2,7 @@ name: Release packages
 
 on:
   push:
-    tags: ['v*']
+    tags: [ 'v*' ]
 
 permissions:
   contents: read
@@ -43,7 +43,7 @@ jobs:
           VERSION: ${{ steps.version.outputs.value }}
         shell: bash
         run: |
-          for project in Messager.NET.Core Messager.NET Messager.NET.Autofac Messager.NET.Microsoft.DependencyInjection; do
+          for project in Messager.NET.Core Messager.NET Messager.NET.Autofac Messager.NET.Microsoft.DependencyInjection Messager.NET.PureDI; do
             dotnet pack "Sources/$project/$project.csproj" -c Release -o "$GITHUB_WORKSPACE/packages" -p:Version="$VERSION" -p:GeneratePackageOnBuild=false -p:ContinuousIntegrationBuild=true
           done
       - uses: actions/upload-artifact@v4

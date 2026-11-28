@@ -8,7 +8,7 @@ internal class SimpleBrokerRegistry
 {
 	private readonly Dictionary<Type, object> _brokers = new();
 	private readonly Lock _locker = new();
-	
+
 	private readonly ILoggerFactory _loggerFactory;
 
 	internal SimpleBrokerRegistry(ILoggerFactory loggerFactory)

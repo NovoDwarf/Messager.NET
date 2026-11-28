@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Messager.NET.Example;
 
-public class Program
+public static class Program
 {
 	public static Task Main(string[] args)
 	{

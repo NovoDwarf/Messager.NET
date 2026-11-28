@@ -1,4 +1,5 @@
 using Messager.NET.Entities;
+using Messager.NET.Enums;
 using Messager.NET.Receivers;
 using static Messager.NET.Tests.Helpers.TestHelpers;
 

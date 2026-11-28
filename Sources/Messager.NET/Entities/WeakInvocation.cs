@@ -21,13 +21,13 @@ internal sealed class WeakInvocation
 
 	internal MethodInfo Method { get; }
 
-	internal bool IsAlive => _target is null || _target.TryGetTarget(out _);
+	internal bool IsAlive => _target?.TryGetTarget(out _) != false;
 
 	internal bool TryGetTarget(out object? target)
 	{
 		if (_target is not null)
 			return _target.TryGetTarget(out target);
-        
+
 		target = null;
 		return true;
 	}

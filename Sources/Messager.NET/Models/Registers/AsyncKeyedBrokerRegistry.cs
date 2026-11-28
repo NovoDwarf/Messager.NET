@@ -8,7 +8,7 @@ internal class AsyncKeyedBrokerRegistry
 {
 	private readonly Dictionary<(Type, Type), object> _brokers = new();
 	private readonly Lock _locker = new();
-	
+
 	private readonly ILoggerFactory _loggerFactory;
 
 	internal AsyncKeyedBrokerRegistry(ILoggerFactory loggerFactory)

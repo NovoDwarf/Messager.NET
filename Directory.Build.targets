@@ -12,31 +12,31 @@
 
         <Message
                 Text="Publishing $(PackageId) $(PackageVersion) to local NuGet repository..."
-                Importance="High" />
+                Importance="High"/>
 
-        <MakeDir Directories="$(CurrentPackageRepository)" />
+        <MakeDir Directories="$(CurrentPackageRepository)"/>
 
         <ItemGroup>
             <LocalPackages
                     Include="$(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg"
-                    Condition="Exists('$(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg')" />
+                    Condition="Exists('$(PackageOutputPath)$(PackageId).$(PackageVersion).nupkg')"/>
 
             <LocalSymbols
                     Include="$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg"
-                    Condition="Exists('$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg')" />
+                    Condition="Exists('$(PackageOutputPath)$(PackageId).$(PackageVersion).snupkg')"/>
         </ItemGroup>
 
         <Copy
                 SourceFiles="@(LocalPackages)"
                 DestinationFolder="$(CurrentPackageRepository)"
                 SkipUnchangedFiles="false"
-                Condition="'@(LocalPackages)' != ''" />
+                Condition="'@(LocalPackages)' != ''"/>
 
         <Copy
                 SourceFiles="@(LocalSymbols)"
                 DestinationFolder="$(CurrentPackageRepository)"
                 SkipUnchangedFiles="false"
-                Condition="'@(LocalSymbols)' != ''" />
+                Condition="'@(LocalSymbols)' != ''"/>
 
     </Target>
 

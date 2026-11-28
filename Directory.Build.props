@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <ProjectTargetFrameworks>net10.0;net11.0</ProjectTargetFrameworks>
-        <Version>2.0.0</Version>
+        <Version>2.1.0</Version>
         <ProjectAuthors>NovoDwarf</ProjectAuthors>
         <ProjectCopyright>NovoDwarf</ProjectCopyright>
         <ProjectRepositoryUrl>https://github.com/NovoDwarf/Messager.NET</ProjectRepositoryUrl>
@@ -15,18 +15,29 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.316" PrivateAssets="all"/>
+        <PackageReference Include="Meziantou.Analyzer" Version="3.0.342" PrivateAssets="all"/>
         <PackageReference Include="Roslynator.Analyzers" Version="5.0.1" PrivateAssets="all"/>
     </ItemGroup>
 
-    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Core' Or '$(MSBuildProjectName)' == 'Messager.NET' Or '$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection' Or '$(MSBuildProjectName)' == 'Messager.NET.Autofac'">
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Core' Or '$(MSBuildProjectName)' == 'Messager.NET' Or '$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection' Or '$(MSBuildProjectName)' == 'Messager.NET.Autofac' Or '$(MSBuildProjectName)' == 'Messager.NET.PureDI'">
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
         <PackageTags>messaging;pubsub;events;dependency-injection;dotnet</PackageTags>
+        <PackageReleaseNotes>See $(ProjectRepositoryUrl)/blob/master/CHANGELOG.md for release notes and breaking changes.</PackageReleaseNotes>
         <Product>Messager.NET</Product>
+        <DebugType>portable</DebugType>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <DefineConstants>$(DefineConstants);JETBRAINS_ANNOTATIONS</DefineConstants>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Core' Or '$(MSBuildProjectName)' == 'Messager.NET' Or '$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection' Or '$(MSBuildProjectName)' == 'Messager.NET.Autofac'">
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Core' Or '$(MSBuildProjectName)' == 'Messager.NET' Or '$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection' Or '$(MSBuildProjectName)' == 'Messager.NET.Autofac' Or '$(MSBuildProjectName)' == 'Messager.NET.PureDI'">
         <None Include="$(MSBuildProjectDirectory)/README.md" Pack="true" PackagePath="/"/>
+        <None Include="$(MSBuildThisFileDirectory).github/Assets/Messager.NET.png" Pack="true" PackagePath="icon.png"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET' Or '$(MSBuildProjectName)' == 'Messager.NET.Microsoft.DependencyInjection' Or '$(MSBuildProjectName)' == 'Messager.NET.Autofac'">
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0"/>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(IsPackable)' != 'false'">
@@ -57,6 +68,11 @@
     <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.Autofac'">
         <Title>Messager.NET.Autofac</Title>
         <Description>Autofac integration for Messager.NET.</Description>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(MSBuildProjectName)' == 'Messager.NET.PureDI'">
+        <Title>Messager.NET.PureDI</Title>
+        <Description>Pure.DI pub/sub integration for Messager.NET.</Description>
     </PropertyGroup>
 
 </Project>
