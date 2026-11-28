@@ -2,6 +2,7 @@ root = true
 
 [*.cs]
 dotnet_diagnostic.MA0048.severity = none
+dotnet_diagnostic.MA0007.severity = none
 
 [{Tests,Examples}/**/*.cs]
 dotnet_diagnostic.MA0004.severity = none
