@@ -1,0 +1,5 @@
+<Project>
+    <ItemGroup>
+        <Compile Include="$(MSBuildThisFileDirectory)MessagerBindings.cs" Link="Messager.NET.PureDI/MessagerBindings.cs"/>
+    </ItemGroup>
+</Project>
