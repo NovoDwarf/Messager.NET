@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <AssemblyName>Messager.NET.PureDI.Example</AssemblyName>
+        <PackageId>Messager.NET.PureDI.Example</PackageId>
+        <TargetFrameworks>$(ProjectTargetFrameworks)</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../Sources/Messager.NET.PureDI/Messager.NET.PureDI.csproj"/>
+        <Compile Include="../../Sources/Messager.NET.PureDI/MessagerComposition.cs" Link="Messager.NET.PureDI/MessagerBindings.cs"/>
+        <PackageReference Include="Pure.DI" Version="2.5.11" PrivateAssets="all"/>
+        <PackageReference Update="Meziantou.Analyzer" Version="3.0.342"/>
+    </ItemGroup>
+</Project>

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>$(ProjectTargetFrameworks)</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Messager.NET/Messager.NET.csproj"/>
+        <PackageReference Include="Pure.DI" Version="2.5.11" PrivateAssets="all"/>
+        <None Include="MessagerComposition.cs" Pack="true" PackagePath="buildTransitive/MessagerBindings.cs"/>
+        <None Include="buildTransitive/Messager.NET.PureDI.targets" Pack="true" PackagePath="buildTransitive/"/>
+    </ItemGroup>
+</Project>
